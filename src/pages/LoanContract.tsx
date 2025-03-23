@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, FileText, User, Lock, Check } from 'lucide-react';
+import { ArrowRight, FileText, User, Lock, Check, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
@@ -25,19 +25,19 @@ const LoanContract = () => {
     totalAmount, 
     installmentsCount, 
     installmentValue,
-    interestRate
+    interestRate,
+    userName,
+    userCPF
   } = location.state || {
     bankLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Caixa_Econ%C3%B4mica_Federal_logo.svg/2560px-Caixa_Econ%C3%B4mica_Federal_logo.svg.png",
     bankName: "Caixa Econômica Federal",
     totalAmount: 10000,
     installmentsCount: 60,
     installmentValue: 250,
-    interestRate: 0.018
+    interestRate: 0.018,
+    userName: "JUAREZ JOSE FERNANDES DE FREITAS",
+    userCPF: "123.456.789-00"
   };
-  
-  // Sample user data (in a real app, this would come from an auth context)
-  const userName = "JUAREZ JOSE FERNANDES DE FREITAS";
-  const userCPF = "123.456.789-00";
   
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
@@ -113,6 +113,35 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
             </div>
           </div>
           
+          {/* Contract details before the contract text */}
+          <div className="mb-6 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <div className="text-sm text-gray-500">NOME COMPLETO</div>
+                <div className="font-medium">{userName}</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">CPF</div>
+                <div className="font-medium">{userCPF}</div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <div className="text-sm text-gray-500">TAXA DE JUROS</div>
+                <div className="font-medium">{(interestRate * 100).toFixed(1)}% ao mês</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">VALOR DA PARCELA</div>
+                <div className="font-medium">{formatCurrency(installmentValue)}</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">BANCO FORNECEDOR</div>
+                <div className="font-medium">{bankName}</div>
+              </div>
+            </div>
+          </div>
+          
           {/* Contract */}
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
@@ -162,7 +191,7 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
           
           {/* Sign button */}
           <Button 
-            className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full"
+            className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full mb-16"
             onClick={handleConfirmSignature}
             disabled={!isTermsAccepted || signatureConfirmed}
           >
@@ -176,13 +205,15 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>Contrato Assinado com Sucesso</DialogTitle>
+                <DialogDescription>
+                  Sua assinatura foi confirmada e o empréstimo será processado.
+                </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col items-center py-6">
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                   <Check className="w-8 h-8 text-green-600" />
                 </div>
                 <p className="text-center text-gray-700 mb-6">
-                  Sua assinatura foi confirmada e o empréstimo será processado. 
                   O valor será depositado em sua conta em até 24 horas.
                 </p>
                 <Button 
@@ -194,6 +225,34 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
               </div>
             </DialogContent>
           </Dialog>
+        </div>
+        
+        {/* Footer */}
+        <div className="fixed bottom-0 w-full bg-white border-t border-gray-200">
+          <div className="flex justify-around items-center py-3">
+            <div className="flex flex-col items-center text-gray-500">
+              <Home size={24} />
+              <span className="text-xs mt-1">Principal</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <BarChart3 size={24} />
+              <span className="text-xs mt-1">Meu FGTS</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="bg-[#FF8C00] rounded-full w-12 h-12 flex items-center justify-center">
+                <DollarSign size={24} className="text-white" />
+              </div>
+              <span className="text-xs mt-1 text-[#FF8C00]">Mais Saques</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <HelpCircle size={24} />
+              <span className="text-xs mt-1">Ajuda</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <MoreHorizontal size={24} />
+              <span className="text-xs mt-1">Mais</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
