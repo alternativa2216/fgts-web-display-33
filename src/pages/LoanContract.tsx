@@ -7,11 +7,14 @@ import FGTSLogo from '@/components/FGTSLogo';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 const LoanContract = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const [signatureConfirmed, setSignatureConfirmed] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   
@@ -51,7 +54,18 @@ const LoanContract = () => {
   };
   
   const handleFinish = () => {
-    navigate('/loan-confirmation');
+    navigate('/bank-details', {
+      state: { 
+        bankLogo, 
+        bankName, 
+        totalAmount, 
+        installmentsCount, 
+        installmentValue,
+        interestRate,
+        userName,
+        userCPF
+      }
+    });
   };
   
   // Create contract text with real values
@@ -133,11 +147,24 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
             </div>
           </div>
           
+          {/* Checkbox for terms agreement */}
+          <div className="flex items-start space-x-2 mb-6">
+            <Checkbox 
+              id="terms" 
+              checked={isTermsAccepted} 
+              onCheckedChange={(checked) => setIsTermsAccepted(checked as boolean)}
+              className="mt-1"
+            />
+            <Label htmlFor="terms" className="text-sm text-gray-700">
+              Declaro estar de acordo com as cláusulas do contrato, e aceito os termos e condições estabelecidos para o presente acordo.
+            </Label>
+          </div>
+          
           {/* Sign button */}
           <Button 
             className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full"
             onClick={handleConfirmSignature}
-            disabled={signatureConfirmed}
+            disabled={!isTermsAccepted || signatureConfirmed}
           >
             <Lock className="w-5 h-5 mr-2" />
             CONFIRMAR ASSINATURA DE CONTRATO
