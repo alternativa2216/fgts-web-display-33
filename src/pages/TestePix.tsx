@@ -27,30 +27,61 @@ const TestePix = () => {
   const [checkingStatus, setCheckingStatus] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [amount, setAmount] = useState<number>(89.70);
+  const [apiResponse, setApiResponse] = useState<any>(null);
 
   // Generate PIX code
   const handleGeneratePix = async () => {
     try {
       setIsLoading(true);
       setPaymentStatus('');
+      setApiResponse(null);
       
       toast({
         title: "Gerando código PIX",
         description: "Aguarde enquanto geramos seu código de pagamento...",
       });
       
-      const pixData = await generatePixPayment(defaultUserData, amount);
+      // Format CPF for Nova Era API (remove special characters)
+      const formattedCpf = defaultUserData.cpf.replace(/[.-]/g, '');
       
-      setPixCode(pixData.copiaecola);
-      setPixQrCode(pixData.qrcode);
-      setTransactionId(pixData.id);
+      // Prepare customer data object for Nova Era API
+      const customerData = {
+        name: defaultUserData.name,
+        cpf: formattedCpf,
+        email: defaultUserData.email,
+        phone: defaultUserData.phone?.replace(/[()-]/g, '') // Remove any formatting from phone
+      };
       
-      toast({
-        title: "Código PIX gerado",
-        description: "O código PIX foi gerado com sucesso!",
+      console.log("Dados para geração de PIX:", {
+        customer: customerData,
+        amount: amount
       });
+      
+      const pixData = await generatePixPayment(customerData, amount);
+      
+      // Save the entire API response for debugging
+      setApiResponse(pixData);
+      
+      if (pixData.copiaecola && pixData.qrcode) {
+        setPixCode(pixData.copiaecola);
+        setPixQrCode(pixData.qrcode);
+        setTransactionId(pixData.id);
+        
+        toast({
+          title: "Código PIX gerado",
+          description: "O código PIX foi gerado com sucesso!",
+        });
+      } else {
+        console.error('Resposta incompleta da API:', pixData);
+        toast({
+          title: "Erro ao gerar PIX",
+          description: "Resposta incompleta da API Nova Era.",
+          variant: "destructive"
+        });
+      }
     } catch (err) {
       console.error('Erro ao gerar PIX:', err);
+      setApiResponse(err);
       toast({
         title: "Erro ao gerar PIX",
         description: "Não foi possível gerar o código PIX.",
@@ -264,6 +295,22 @@ const TestePix = () => {
                 ) : "Verificar Pagamento"}
               </Button>
             </CardFooter>
+          </Card>
+        )}
+        
+        {/* Debug Info (API Response) */}
+        {apiResponse && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Resposta da API (Debug)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-gray-100 p-4 rounded-md overflow-auto max-h-96">
+                <pre className="text-xs">
+                  {JSON.stringify(apiResponse, null, 2)}
+                </pre>
+              </div>
+            </CardContent>
           </Card>
         )}
       </div>
