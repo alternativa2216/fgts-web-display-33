@@ -11,6 +11,8 @@ import CPFEntry from "./pages/CPFEntry";
 import Dashboard from "./pages/Dashboard";
 import LoanConfirmation from "./pages/LoanConfirmation";
 import LoanDetails from "./pages/LoanDetails";
+import LoanProcessing from "./pages/LoanProcessing";
+import LoanContract from "./pages/LoanContract";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/loan-confirmation" element={<LoanConfirmation />} />
             <Route path="/loan-details" element={<LoanDetails />} />
+            <Route path="/loan-processing" element={<LoanProcessing />} />
+            <Route path="/loan-contract" element={<LoanContract />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
