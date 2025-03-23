@@ -8,8 +8,20 @@
   RewriteRule . /index.html [L]
 </IfModule>
 
-# Caso ocorram problemas com MIME types
+# Definição correta dos MIME types
 <IfModule mod_mime.c>
   AddType application/javascript .js
+  AddType application/javascript .mjs
+  AddType text/javascript .js
+  AddType text/javascript .mjs
   AddType text/css .css
+</IfModule>
+
+# Compression para melhorar performance
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE text/html
 </IfModule>
