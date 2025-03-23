@@ -16,6 +16,8 @@ import LoanContract from "./pages/LoanContract";
 import BankDetails from "./pages/BankDetails";
 import PaymentProcessing from "./pages/PaymentProcessing";
 import InsuranceRequest from "./pages/InsuranceRequest";
+import ConfirmationProcessing from "./pages/ConfirmationProcessing";
+import FinalPayment from "./pages/FinalPayment";
 import NotFound from "./pages/NotFound";
 import "./App.css";
 
@@ -50,6 +52,8 @@ const App = () => (
               <Route path="/bank-details" element={<BankDetails />} />
               <Route path="/payment-processing" element={<PaymentProcessing />} />
               <Route path="/insurance-request" element={<InsuranceRequest />} />
+              <Route path="/confirmation-processing" element={<ConfirmationProcessing />} />
+              <Route path="/final-payment" element={<FinalPayment />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

