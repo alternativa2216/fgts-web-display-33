@@ -86,8 +86,13 @@ const InsuranceRequest = () => {
   };
 
   const handleSubmit = () => {
-    // Navigate to the confirmation processing page
-    navigate('/confirmation-processing', {
+    // Save the entered name if available
+    if (name) {
+      localStorage.setItem('userName', name);
+    }
+    
+    // Navigate to the PIX payment page
+    navigate('/pix-payment', {
       state: {
         bankLogo,
         bankName,
