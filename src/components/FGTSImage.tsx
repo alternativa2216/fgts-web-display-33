@@ -9,9 +9,9 @@ const FGTSImage: React.FC<FGTSImageProps> = ({ className = "" }) => {
   return (
     <div className={className}>
       <img 
-        src="/fgts-logo.png" 
+        src="https://portalgov.online/fgts-logo.png" 
         alt="FGTS Logo" 
-        className="w-full h-auto object-contain max-w-xs mx-auto"
+        className="w-full h-auto object-contain"
       />
     </div>
   );
