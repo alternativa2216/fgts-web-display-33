@@ -2,10 +2,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import CaixaLogo from '@/components/CaixaLogo';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
@@ -14,13 +16,36 @@ const Login = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    
     // Any password is accepted as per requirement
-    navigate('/cpf-check');
+    // Display loading screen for 3 seconds
+    setTimeout(() => {
+      navigate('/dashboard');
+    }, 3000);
   };
 
   const handleBack = () => {
     navigate('/cpf-entry');
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-fgts-pattern flex flex-col items-center justify-center">
+        <div className="container mx-auto px-6 flex-1 flex flex-col items-center justify-center max-w-md">
+          <div className="w-full flex justify-center mb-10">
+            <CaixaLogo />
+          </div>
+          <div className="text-white text-center">
+            <p className="text-2xl font-light mb-4">Carregando...</p>
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col">

