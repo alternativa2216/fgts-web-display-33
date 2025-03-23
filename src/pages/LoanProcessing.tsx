@@ -91,7 +91,7 @@ const LoanProcessing = () => {
 
       {/* Main content */}
       <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
-        <div className="p-4 sm:p-6 flex flex-col items-center justify-center h-full">
+        <div className="p-4 sm:p-6 pb-20 flex flex-col items-center justify-center h-full">
           <div className="flex flex-col items-center justify-center space-y-8 max-w-md mx-auto">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-semibold text-[#005CA9] mb-3">Enviando Proposta para o Banco</h2>

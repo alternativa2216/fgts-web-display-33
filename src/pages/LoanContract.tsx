@@ -6,7 +6,6 @@ import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
@@ -15,8 +14,6 @@ const LoanContract = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
-  const [signatureConfirmed, setSignatureConfirmed] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
   
   // Get data from location state
   const { 
@@ -49,11 +46,6 @@ const LoanContract = () => {
   };
   
   const handleConfirmSignature = () => {
-    setSignatureConfirmed(true);
-    setShowConfirmation(true);
-  };
-  
-  const handleFinish = () => {
     navigate('/bank-details', {
       state: { 
         bankLogo, 
@@ -97,7 +89,7 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
 
       {/* Main content */}
       <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
-        <div className="p-4 sm:p-6">
+        <div className="p-4 sm:p-6 pb-28">
           {/* User info and approval status */}
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-1">
@@ -177,7 +169,7 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
           </div>
           
           {/* Checkbox for terms agreement */}
-          <div className="flex items-start space-x-2 mb-6">
+          <div className="flex items-start space-x-2 mb-8">
             <Checkbox 
               id="terms" 
               checked={isTermsAccepted} 
@@ -189,42 +181,16 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
             </Label>
           </div>
           
-          {/* Sign button */}
+          {/* Sign button with more bottom margin */}
           <Button 
-            className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full mb-16"
+            className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full mb-12"
             onClick={handleConfirmSignature}
-            disabled={!isTermsAccepted || signatureConfirmed}
+            disabled={!isTermsAccepted}
           >
             <Lock className="w-5 h-5 mr-2" />
             CONFIRMAR ASSINATURA DE CONTRATO
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
-          
-          {/* Success dialog */}
-          <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Contrato Assinado com Sucesso</DialogTitle>
-                <DialogDescription>
-                  Sua assinatura foi confirmada e o empréstimo será processado.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex flex-col items-center py-6">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                  <Check className="w-8 h-8 text-green-600" />
-                </div>
-                <p className="text-center text-gray-700 mb-6">
-                  O valor será depositado em sua conta em até 24 horas.
-                </p>
-                <Button 
-                  className="bg-[#005CA9] hover:bg-[#004A87] text-white px-6"
-                  onClick={handleFinish}
-                >
-                  Concluir
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
         </div>
         
         {/* Footer */}

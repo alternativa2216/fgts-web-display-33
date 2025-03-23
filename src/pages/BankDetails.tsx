@@ -70,7 +70,7 @@ const BankDetails = () => {
 
       {/* Main content */}
       <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
-        <div className="p-4 sm:p-6">
+        <div className="p-4 sm:p-6 pb-28">
           {/* User info section */}
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-1">
@@ -180,7 +180,7 @@ const BankDetails = () => {
           )}
           
           {/* Additional information */}
-          <div className="mb-6">
+          <div className="mb-8">
             <div className="bg-yellow-50 p-3 rounded-md mb-4 text-yellow-800 text-sm">
               <div className="font-semibold mb-1">VALOR CAI EM ATÉ 12 HORAS</div>
               <p>Após a confirmação, o valor será depositado na conta informada.</p>
@@ -191,9 +191,9 @@ const BankDetails = () => {
             </div>
           </div>
           
-          {/* Submit button */}
+          {/* Submit button with more bottom margin */}
           <Button 
-            className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full mb-16"
+            className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full mb-12"
             onClick={handleSubmit}
             disabled={paymentMethod === 'pix' ? !pixKey : (!bankName || !accountNumber || !branch)}
           >
