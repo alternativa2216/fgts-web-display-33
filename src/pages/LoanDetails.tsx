@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from 'react';
-import { ArrowRight, DollarSign, BarChart3, Calendar, Home, HelpCircle, MoreHorizontal, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowRight, DollarSign, BarChart3, Calendar, Home, HelpCircle, MoreHorizontal, Check, Info } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
 import { Button } from '@/components/ui/button';
@@ -8,49 +8,15 @@ import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Checkbox } from '@/components/ui/checkbox';
 
-interface UserData {
-  DADOS: {
-    cpf: string;
-    nome: string;
-    nome_mae: string;
-    data_nascimento: string;
-    sexo: string;
-  }
-}
-
-const LoanConfirmation = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);
+const LoanDetails = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const [termsAccepted, setTermsAccepted] = useState(false);
   
-  useEffect(() => {
-    // Try to get user data from localStorage
-    const userDataString = localStorage.getItem('userData');
-    
-    if (userDataString) {
-      try {
-        const parsedData: UserData = JSON.parse(userDataString);
-        setUserData(parsedData);
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-        navigate('/dashboard');
-      }
-    } else {
-      // No user data available, redirect back to dashboard
-      navigate('/dashboard');
-    }
-  }, [navigate]);
-
-  // Format CPF: 12345678900 -> 123.456.789-00
-  const formatCPF = (cpf: string): string => {
-    if (!cpf || cpf.length !== 11) return cpf;
-    
-    return `${cpf.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9, 11)}`;
-  };
-
-  const handleConfirm = () => {
-    // Navigate to loan details page
-    navigate('/loan-details');
+  const handleProceed = () => {
+    // Here you would handle the loan application submission
+    // For now, just go back to dashboard
+    navigate('/dashboard');
   };
 
   return (
@@ -63,53 +29,70 @@ const LoanConfirmation = () => {
 
       {/* Title */}
       <div className="p-4 sm:p-6">
-        <div className="text-white text-2xl font-light">Confirmação de Dados</div>
+        <div className="text-white text-2xl font-light">Detalhes do Empréstimo</div>
         <div className="text-white opacity-60 text-sm mt-1">
-          Verifique se seus dados estão corretos para prosseguir com o empréstimo
+          Confira as condições e confirme seu empréstimo
         </div>
       </div>
 
       {/* Main content */}
       <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
         <div className="p-4 sm:p-6">
-          {/* User data confirmation */}
+          {/* Loan details */}
           <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
-            <h2 className="text-[#005CA9] text-xl font-semibold mb-4">Dados Pessoais</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div>
+                <div className="text-gray-500 text-sm">Valor do empréstimo</div>
+                <div className="font-medium text-gray-900 text-xl">R$ 26.000,00</div>
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm">Parcelas</div>
+                <div className="font-medium text-gray-900 text-xl">84x de R$ 859,90</div>
+              </div>
+            </div>
             
-            {userData ? (
-              <div className="space-y-4">
-                <div>
-                  <div className="text-gray-500 text-sm">Nome Completo</div>
-                  <div className="font-medium text-gray-900">{userData.DADOS.nome}</div>
-                </div>
-                
-                <div>
-                  <div className="text-gray-500 text-sm">CPF</div>
-                  <div className="font-medium text-gray-900">{formatCPF(userData.DADOS.cpf)}</div>
-                </div>
-                
-                <div>
-                  <div className="text-gray-500 text-sm">Nome da Mãe</div>
-                  <div className="font-medium text-gray-900">{userData.DADOS.nome_mae}</div>
-                </div>
-                
-                <div>
-                  <div className="text-gray-500 text-sm">Data de Nascimento</div>
-                  <div className="font-medium text-gray-900">{userData.DADOS.data_nascimento}</div>
-                </div>
-                
-                <div className="mt-6">
-                  <Button 
-                    className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full"
-                    onClick={handleConfirm}
-                  >
-                    CONFIRMAR DADOS
-                  </Button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div>
+                <div className="text-gray-500 text-sm">Valor total a ser pago</div>
+                <div className="font-medium text-gray-900 text-xl">R$ 72.231,60</div>
+              </div>
+              <div>
+                <div className="text-gray-500 text-sm">Taxa de referência</div>
+                <div className="font-medium text-blue-600 text-xl">3,04% ao mês</div>
+              </div>
+            </div>
+            
+            <div className="bg-blue-50 p-4 rounded-md mb-6 flex">
+              <Info className="text-blue-700 mr-3 flex-shrink-0 mt-1" size={20} />
+              <div className="text-blue-800 text-sm">
+                Os valores desta simulação consideram a taxa média de juros do consignado privado, segundo o Bacen. As instituições podem oferecer condições ainda melhores. Solicite suas propostas!
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-3 mb-6">
+              <Checkbox 
+                id="terms" 
+                checked={termsAccepted}
+                onCheckedChange={() => setTermsAccepted(!termsAccepted)}
+                className="mt-1"
+              />
+              <div>
+                <label htmlFor="terms" className="text-gray-700 text-sm cursor-pointer">
+                  Concordo em compartilhar meus dados trabalhistas e financeiros com as instituições financeiras parceiras.
+                </label>
+                <div className="mt-1">
+                  <span className="text-blue-600 text-sm cursor-pointer">Quais dados serão compartilhados?</span>
                 </div>
               </div>
-            ) : (
-              <div className="text-center py-4 text-gray-500">Carregando dados...</div>
-            )}
+            </div>
+            
+            <Button 
+              className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full"
+              onClick={handleProceed}
+              disabled={!termsAccepted}
+            >
+              CONTRATAR EMPRÉSTIMO
+            </Button>
           </div>
           
           {/* Benefits */}
@@ -162,4 +145,4 @@ const LoanConfirmation = () => {
   );
 };
 
-export default LoanConfirmation;
+export default LoanDetails;
