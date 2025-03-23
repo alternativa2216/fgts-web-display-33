@@ -14,10 +14,29 @@ const LoanContract = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+  const [storedCPF, setStoredCPF] = useState<string>('');
+  const [storedUserName, setStoredUserName] = useState<string>('');
   
   // Add scroll to top effect
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Get user data from localStorage
+    const cpf = localStorage.getItem('userCPF') || '';
+    setStoredCPF(cpf);
+    
+    // Try to get user name from stored data
+    try {
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        if (parsedData && parsedData.DADOS && parsedData.DADOS.nome) {
+          setStoredUserName(parsedData.DADOS.nome);
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing userData:', error);
+    }
   }, []);
   
   // Get data from location state
@@ -40,6 +59,10 @@ const LoanContract = () => {
     userName: "JUAREZ JOSE FERNANDES DE FREITAS",
     userCPF: "123.456.789-00"
   };
+  
+  // Get actual values, preferring localStorage values over location state
+  const actualUserName = storedUserName || userName;
+  const actualCPF = storedCPF || userCPF;
   
   // Format CPF with dots and dash if it's not already formatted
   const formatCPF = (cpf: string) => {
@@ -70,8 +93,8 @@ const LoanContract = () => {
         installmentsCount, 
         installmentValue,
         interestRate,
-        userName,
-        userCPF
+        userName: actualUserName,
+        userCPF: actualCPF
       }
     });
   };
@@ -79,7 +102,7 @@ const LoanContract = () => {
   // Create contract text with real values
   const contractText = `Contrato de Empréstimo Consignado CLT
 
-Pelo presente contrato, a empresa concede ao(a) empregado(a) ${userName}, inscrito(a) no CPF nº ${formatCPF(userCPF)}, um empréstimo consignado com as seguintes condições: o valor acordado de ${formatCurrency(totalAmount)} será pago em ${installmentsCount} parcelas mensais de ${formatCurrency(installmentValue)}, com juros de ${(interestRate * 100).toFixed(1)}% ao mês, descontados diretamente da folha de pagamento do(a) empregado(a).
+Pelo presente contrato, a empresa concede ao(a) empregado(a) ${actualUserName}, inscrito(a) no CPF nº ${formatCPF(actualCPF)}, um empréstimo consignado com as seguintes condições: o valor acordado de ${formatCurrency(totalAmount)} será pago em ${installmentsCount} parcelas mensais de ${formatCurrency(installmentValue)}, com juros de ${(interestRate * 100).toFixed(1)}% ao mês, descontados diretamente da folha de pagamento do(a) empregado(a).
 
 O desconto será efetuado mensalmente, com o valor da parcela correspondente, de forma automática, pela empresa, até que o montante total do empréstimo seja quitado. A empresa compromete-se a realizar os descontos de acordo com o saldo devedor e com as condições aqui estabelecidas, sem a necessidade de aprovação do(a) empregado(a) para cada parcela.
 
@@ -110,10 +133,10 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-1">
               <User size={18} className="text-gray-600" />
-              <h3 className="font-semibold">{userName}</h3>
+              <h3 className="font-semibold">{actualUserName}</h3>
             </div>
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-sm text-gray-600">CPF: {formatCPF(userCPF)}</span>
+              <span className="text-sm text-gray-600">CPF: {formatCPF(actualCPF)}</span>
             </div>
             <div className="bg-green-100 text-green-800 p-3 rounded-md flex items-center gap-2">
               <Check size={18} />
@@ -126,11 +149,11 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <div className="text-sm text-gray-500">NOME COMPLETO</div>
-                <div className="font-medium">{userName}</div>
+                <div className="font-medium">{actualUserName}</div>
               </div>
               <div>
                 <div className="text-sm text-gray-500">CPF</div>
-                <div className="font-medium">{formatCPF(userCPF)}</div>
+                <div className="font-medium">{formatCPF(actualCPF)}</div>
               </div>
             </div>
             

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AlertTriangle, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,30 @@ const InsuranceRequest = () => {
   const isMobile = useIsMobile();
   const [name, setName] = useState('');
   const [cpf, setCpf] = useState('');
+  const [storedCPF, setStoredCPF] = useState<string>('');
+  const [storedUserName, setStoredUserName] = useState<string>('');
+  
+  // Add scroll to top effect and get stored user data
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    
+    // Get user data from localStorage
+    const savedCPF = localStorage.getItem('userCPF') || '';
+    setStoredCPF(savedCPF);
+    
+    // Try to get user name from stored data
+    try {
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        if (parsedData && parsedData.DADOS && parsedData.DADOS.nome) {
+          setStoredUserName(parsedData.DADOS.nome);
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing userData:', error);
+    }
+  }, []);
   
   // Get the selected bank data from location state
   const { 
@@ -37,8 +61,13 @@ const InsuranceRequest = () => {
     userCPF: "123.456.789-00"
   };
 
+  // Get actual values, preferring localStorage values over location state
+  const actualUserName = storedUserName || userName;
+  const actualCPF = storedCPF || userCPF;
+
   // Format CPF with dots and dash if it's not already formatted
   const formatCPF = (cpf: string) => {
+    if (!cpf) return '';
     if (cpf.includes('.') || cpf.includes('-')) return cpf;
     
     const cpfDigits = cpf.replace(/\D/g, '');
@@ -66,8 +95,8 @@ const InsuranceRequest = () => {
         installmentsCount,
         installmentValue,
         interestRate,
-        userName: name || userName,
-        userCPF: cpf || userCPF,
+        userName: name || actualUserName,
+        userCPF: cpf || actualCPF,
         pixKey,
         insuranceAmount: 48.52
       }
@@ -136,7 +165,7 @@ const InsuranceRequest = () => {
                 <Label htmlFor="fullName">Nome Completo:</Label>
                 <Input 
                   id="fullName" 
-                  value={name || userName}
+                  value={name || actualUserName}
                   onChange={(e) => setName(e.target.value)}
                   className="mt-1"
                 />
@@ -146,7 +175,7 @@ const InsuranceRequest = () => {
                 <Label htmlFor="cpf">CPF:</Label>
                 <Input 
                   id="cpf" 
-                  value={cpf || formatCPF(userCPF)}
+                  value={cpf || formatCPF(actualCPF)}
                   onChange={(e) => setCpf(e.target.value)}
                   className="mt-1"
                 />

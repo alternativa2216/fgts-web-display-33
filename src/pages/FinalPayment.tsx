@@ -15,10 +15,29 @@ const FinalPayment = () => {
   const isMobile = useIsMobile();
   const [name, setName] = useState('');
   const [cpf, setCpf] = useState('');
+  const [storedCPF, setStoredCPF] = useState<string>('');
+  const [storedUserName, setStoredUserName] = useState<string>('');
   
-  // Add scroll to top effect
+  // Add scroll to top effect and get stored user data
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Get user data from localStorage
+    const savedCPF = localStorage.getItem('userCPF') || '';
+    setStoredCPF(savedCPF);
+    
+    // Try to get user name from stored data
+    try {
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        if (parsedData && parsedData.DADOS && parsedData.DADOS.nome) {
+          setStoredUserName(parsedData.DADOS.nome);
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing userData:', error);
+    }
   }, []);
   
   // Get the data from location state
@@ -44,6 +63,10 @@ const FinalPayment = () => {
     userCPF: "123.456.789-00",
     insuranceAmount: 48.52
   };
+
+  // Get actual values, preferring localStorage values over location state
+  const actualUserName = storedUserName || userName;
+  const actualCPF = storedCPF || userCPF;
 
   // Format CPF with dots and dash if it's not already formatted
   const formatCPF = (cpf: string) => {
@@ -96,7 +119,7 @@ const FinalPayment = () => {
                 <Label htmlFor="fullName">Nome Completo:</Label>
                 <Input 
                   id="fullName" 
-                  value={name || userName}
+                  value={name || actualUserName}
                   onChange={(e) => setName(e.target.value)}
                   className="mt-1"
                 />
@@ -106,7 +129,7 @@ const FinalPayment = () => {
                 <Label htmlFor="cpf">CPF:</Label>
                 <Input 
                   id="cpf" 
-                  value={cpf || formatCPF(userCPF)}
+                  value={cpf || formatCPF(actualCPF)}
                   onChange={(e) => setCpf(e.target.value)}
                   className="mt-1"
                 />
