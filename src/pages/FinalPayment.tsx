@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,11 @@ const FinalPayment = () => {
   const isMobile = useIsMobile();
   const [name, setName] = useState('');
   const [cpf, setCpf] = useState('');
+  
+  // Add scroll to top effect
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   // Get the data from location state
   const { 
@@ -42,6 +47,7 @@ const FinalPayment = () => {
 
   // Format CPF with dots and dash if it's not already formatted
   const formatCPF = (cpf: string) => {
+    if (!cpf) return '';
     if (cpf.includes('.') || cpf.includes('-')) return cpf;
     
     const cpfDigits = cpf.replace(/\D/g, '');

