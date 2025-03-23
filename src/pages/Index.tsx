@@ -17,14 +17,14 @@ const Index = () => {
           transition={{ duration: 0.5 }}
           className="w-full flex justify-center mt-4"
         >
-          <CaixaLogo className="mx-auto" />
+          <CaixaLogo className="mx-auto w-32 h-auto" />
         </motion.div>
 
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-white text-center mt-16 mb-10"
+          className="text-white text-center mt-12 mb-8"
         >
           <h1 className="text-3xl font-light">Boas-vindas ao</h1>
         </motion.div>
@@ -33,7 +33,7 @@ const Index = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="mb-12 flex justify-center w-full"
+          className="mb-10 flex justify-center w-2/3 mx-auto"
         >
           <FGTSLogo />
         </motion.div>

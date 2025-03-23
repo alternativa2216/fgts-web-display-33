@@ -35,7 +35,19 @@ const LoanDetails = () => {
   const handleConsult = () => {
     if (!requestedAmount || !desiredInstallment) return;
     
-    const amount = parseFloat(requestedAmount);
+    // Limit the loan amount to around 10,000 reais
+    const requestedAmountValue = parseFloat(requestedAmount);
+    const maxLoanAmount = 10000;
+    
+    // Use the requested amount but cap it at 10,000
+    const amount = Math.min(requestedAmountValue, maxLoanAmount);
+    
+    // If the user requested more than the max, we can show a message or adjust silently
+    if (requestedAmountValue > maxLoanAmount) {
+      // You could show a toast or message here if needed
+      console.log("Requested amount exceeded maximum, limiting to R$ 10,000");
+    }
+    
     const installment = parseFloat(desiredInstallment);
     
     // Generate 3 proposals with different values
