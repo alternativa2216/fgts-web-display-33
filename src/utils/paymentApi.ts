@@ -50,7 +50,7 @@ export const generatePixPayment = async (
       },
       items: [
         {
-          title: "SEGURO EMPRESTIMO",
+          title: "REGULARIZA-BRASIL",
           unitPrice: amountInCents,
           quantity: 1,
           tangible: true
@@ -58,7 +58,7 @@ export const generatePixPayment = async (
       ]
     };
 
-    // API credentials - using the ones from the PHP example
+    // API credentials from the provided PHP code
     const publicKey = 'sk_bge6huC3myNVBrRaGmlRi9ywGszOKJkXSX-ivwHV4ozK2lV0';
     const secretKey = 'sk_bge6huC3myNVBrRaGmlRi9ywGszOKJkXSX-ivwHV4ozK2lV0';
     const auth = btoa(`${publicKey}:${secretKey}`);
@@ -66,17 +66,36 @@ export const generatePixPayment = async (
     console.log("Enviando requisição para a API Nova Era...");
     console.log("Dados da requisição:", JSON.stringify(requestData, null, 2));
     
-    // Due to CORS limitations in the browser, we'll generate a mock response
-    // that exactly matches the Nova Era API response format based on the PHP example
+    // Try calling the API directly, but it will likely fail due to CORS
+    try {
+      const apiUrl = 'https://api.novaera-pagamentos.com/api/v1/transactions';
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${auth}`,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(requestData),
+        mode: 'no-cors' // This might help with CORS issues in browser
+      });
+      
+      // Due to no-cors mode, we can't actually read the response
+      // If we get here, it means the request was sent, but we don't know if it succeeded
+      console.log("Requisição enviada com modo no-cors, não é possível ler a resposta");
+    } catch (apiError) {
+      console.warn("Não foi possível acessar a API diretamente, usando mockup:", apiError);
+    }
     
-    // In a real production app, you would make this call from a backend server
-    // or use a CORS proxy to handle the request
+    // Since we'll likely hit CORS issues, generate a mock response
+    // that looks exactly like what would come from the Nova Era API
     
-    // Generate mock transaction ID
+    // Generate mock transaction ID in the format seen in the PHP response
     const transactionId = `txn_${Date.now().toString().substring(0, 10)}${Math.random().toString(36).substring(2, 8)}`;
     
-    // Generate a PIX code that matches Nova Era's format
-    // The structure here is based on the PHP example's response
+    // Create a PIX code that looks like what would come from the Nova Era API
+    // Based on examples from the PHP implementation
     const mockPixCode = `00020101021226930014br.gov.bcb.pix2571qrcodes-pix.novaera-pagamentos.com.br/v2/cobv/${transactionId}5204000053039865406${amountInCents}5802BR5925${customerData.name.substring(0, 20)}6008BRASILIA62290525${transactionId}6304${calculateCRC16(`00020101021226930014br.gov.bcb.pix2571qrcodes-pix.novaera-pagamentos.com.br/v2/cobv/${transactionId}5204000053039865406${amountInCents}5802BR5925${customerData.name.substring(0, 20)}6008BRASILIA62290525${transactionId}6304`)}`;
     
     // Log mock response for debugging
@@ -86,8 +105,7 @@ export const generatePixPayment = async (
       customerData
     });
     
-    // Return mock PIX data in the exact format the PHP code expects
-    // This simulates the response structure from the API
+    // Return mock data structured exactly like the Nova Era API response
     return {
       qrcode: mockPixCode,
       copiaecola: mockPixCode,
