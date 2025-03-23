@@ -58,7 +58,7 @@ const Index = () => {
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
           className="w-full bg-caixa-orange text-white py-4 rounded-md text-lg font-medium shadow-lg hover:bg-opacity-90 transition-all duration-300"
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/cpf-entry')}
         >
           Entrar no aplicativo
         </motion.button>
