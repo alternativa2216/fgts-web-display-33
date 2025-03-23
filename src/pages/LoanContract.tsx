@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight, FileText, User, Lock, Check, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
@@ -14,6 +14,11 @@ const LoanContract = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+  
+  // Add scroll to top effect
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   // Get data from location state
   const { 
@@ -38,6 +43,7 @@ const LoanContract = () => {
   
   // Format CPF with dots and dash if it's not already formatted
   const formatCPF = (cpf: string) => {
+    if (!cpf) return '';
     if (cpf.includes('.') || cpf.includes('-')) return cpf;
     
     const cpfDigits = cpf.replace(/\D/g, '');
