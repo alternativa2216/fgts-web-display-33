@@ -30,11 +30,11 @@ const PIXPayment = () => {
   const { 
     userName,
     userCPF,
-    insuranceAmount = 89.70 // Updated to match the value from PHP example
+    insuranceAmount = 89.70 // Insurance amount set to 89.70 as per PHP example
   } = location.state || {
     userName: storedUserName,
     userCPF: storedCPF,
-    insuranceAmount: 89.70 // Updated to match the value from PHP example
+    insuranceAmount: 89.70
   };
 
   const actualUserName = userName || storedUserName || "Nome do Cliente";
@@ -42,13 +42,11 @@ const PIXPayment = () => {
 
   // Generate PIX code immediately when component mounts
   useEffect(() => {
-    // Function to generate PIX code
     const fetchPixCode = async () => {
       try {
         setIsLoading(true);
         setError(null);
         
-        // Show loading toast
         toast({
           title: "Gerando código PIX",
           description: "Aguarde enquanto geramos seu código de pagamento...",
@@ -59,21 +57,13 @@ const PIXPayment = () => {
           cpf: actualCPF
         };
         
-        // Generate PIX with timeout to prevent hanging
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Tempo esgotado aguardando resposta da API')), 20000)
-        );
+        console.log("Iniciando geração de PIX para:", customerData);
         
-        // Race between API and timeout
-        const pixData = await Promise.race([
-          generatePixPayment(customerData, insuranceAmount),
-          timeoutPromise
-        ]) as any;
+        const pixData = await generatePixPayment(customerData, insuranceAmount);
         
         setPixCode(pixData.copiaecola);
         setPixQrCode(pixData.qrcode);
         setTransactionId(pixData.id);
-        setIsLoading(false);
         
         toast({
           title: "Código PIX gerado",
@@ -82,40 +72,18 @@ const PIXPayment = () => {
         });
       } catch (err) {
         console.error('Erro ao buscar código PIX:', err);
-        setError('Não foi possível gerar o código PIX via API. Usando código alternativo.');
+        setError('Não foi possível gerar o código PIX. Tente novamente.');
         
-        // Try to generate a mock code as fallback
-        try {
-          const customerData = {
-            name: actualUserName,
-            cpf: actualCPF
-          };
-          
-          const pixData = await generatePixPayment(customerData, insuranceAmount);
-          
-          setPixCode(pixData.copiaecola);
-          setPixQrCode(pixData.qrcode);
-          setTransactionId(pixData.id);
-          
-          toast({
-            title: "Código PIX gerado (alternativo)",
-            description: "Um código PIX alternativo foi gerado com sucesso!",
-            variant: "default"
-          });
-        } catch (fallbackErr) {
-          setError('Erro crítico: Impossível gerar código PIX. Tente novamente mais tarde.');
-          toast({
-            title: "Erro ao gerar PIX",
-            description: "Não foi possível gerar nenhum código PIX. Tente novamente.",
-            variant: "destructive"
-          });
-        }
-        
+        toast({
+          title: "Erro ao gerar PIX",
+          description: "Não foi possível gerar o código PIX. Tente novamente.",
+          variant: "destructive"
+        });
+      } finally {
         setIsLoading(false);
       }
     };
 
-    // Call immediately to generate PIX code
     fetchPixCode();
   }, [actualUserName, actualCPF, insuranceAmount]);
 
@@ -146,13 +114,12 @@ const PIXPayment = () => {
   };
 
   // Copy PIX code to clipboard
-  const handleCopyPIX = function(this: any) {
-    const pixInputRef = this.pixInputRef;
+  const handleCopyPIX = () => {
     if (pixInputRef.current) {
       pixInputRef.current.select();
       navigator.clipboard.writeText(pixInputRef.current.value)
         .then(() => {
-          this.setCopySuccess(true);
+          setCopySuccess(true);
           toast({
             title: "Código copiado!",
             description: "O código PIX foi copiado para a área de transferência.",
@@ -160,7 +127,7 @@ const PIXPayment = () => {
           });
           
           // Reset copy success after 2 seconds
-          setTimeout(() => this.setCopySuccess(false), 2000);
+          setTimeout(() => setCopySuccess(false), 2000);
         })
         .catch(err => {
           console.error('Failed to copy text: ', err);
