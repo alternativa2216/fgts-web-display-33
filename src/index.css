@@ -78,6 +78,17 @@
   }
 }
 
+@layer utilities {
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 .bg-fgts-pattern {
   background-color: #005CA9;
   background-image: linear-gradient(135deg, #005CA9 0%, #004A87 100%);

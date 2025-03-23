@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Loader, Check, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
@@ -12,6 +12,7 @@ const PaymentProcessing = () => {
   const isMobile = useIsMobile();
   const [currentStep, setCurrentStep] = useState(0);
   const [visibleSteps, setVisibleSteps] = useState(1);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   // Get the selected bank data from location state
   const { 
@@ -41,6 +42,14 @@ const PaymentProcessing = () => {
     "FINALIZANDO CONTRATO COM A CORRETORA CAIXA",
     "CONTRATO FINALIZADO"
   ];
+
+  // Auto-scroll to new steps
+  useEffect(() => {
+    if (containerRef.current && visibleSteps > 1) {
+      const lastStep = containerRef.current.querySelector('.step-item:last-child');
+      lastStep?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [visibleSteps]);
 
   useEffect(() => {
     // Setup sequential processing steps
@@ -77,6 +86,14 @@ const PaymentProcessing = () => {
     };
   }, [currentStep, steps.length, navigate, bankLogo, bankName, location.state, totalAmount, installmentsCount, installmentValue, interestRate, userName, userCPF, visibleSteps]);
 
+  // Add no-scroll class to body
+  useEffect(() => {
+    document.body.classList.add('no-scroll');
+    return () => {
+      document.body.classList.remove('no-scroll');
+    };
+  }, []);
+
   return (
     <div className="min-h-[100svh] flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9] overflow-hidden">
       {/* Header */}
@@ -111,9 +128,9 @@ const PaymentProcessing = () => {
             </div>
             
             {/* Status tracking steps - only show steps up to visibleSteps */}
-            <div className="w-full space-y-4">
+            <div ref={containerRef} className="w-full space-y-4 max-h-[30vh] overflow-y-auto px-2 scrollbar-none">
               {steps.slice(0, visibleSteps).map((step, index) => (
-                <div key={index} className="flex items-center gap-3">
+                <div key={index} className="flex items-center gap-3 step-item">
                   {index < currentStep ? (
                     <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
                       <Check className="w-5 h-5 text-white" />
@@ -135,7 +152,7 @@ const PaymentProcessing = () => {
             </div>
             
             {/* Animated loader at the bottom - added more space above footer */}
-            <div className="animate-pulse flex items-center justify-center mt-8 mb-24">
+            <div className="animate-pulse flex items-center justify-center mt-8 mb-28">
               <Loader className="w-8 h-8 text-[#005CA9] animate-spin mr-2" />
               <span className="text-[#005CA9]">Aguarde um momento...</span>
             </div>

