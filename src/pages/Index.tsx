@@ -1,10 +1,13 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
 
 const Index = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-fgts-pattern min-h-screen flex flex-col relative overflow-hidden">
       <div className="container mx-auto px-6 py-8 flex-1 flex flex-col items-center max-w-md">
@@ -12,9 +15,9 @@ const Index = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full mt-4"
+          className="w-full flex justify-center mt-4"
         >
-          <CaixaLogo className="mx-auto sm:mx-0" />
+          <CaixaLogo className="mx-auto" />
         </motion.div>
 
         <motion.div 
@@ -30,7 +33,7 @@ const Index = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="mb-12"
+          className="mb-12 flex justify-center w-full"
         >
           <FGTSLogo />
         </motion.div>
@@ -55,6 +58,7 @@ const Index = () => {
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
           className="w-full bg-caixa-orange text-white py-4 rounded-md text-lg font-medium shadow-lg hover:bg-opacity-90 transition-all duration-300"
+          onClick={() => navigate('/login')}
         >
           Entrar no aplicativo
         </motion.button>
@@ -64,7 +68,7 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 1 }}
           href="#"
-          className="text-white mt-8 text-sm underline hover:text-opacity-80 transition-colors duration-300 flex items-center"
+          className="text-white mt-8 text-sm underline hover:text-opacity-80 transition-colors duration-300 flex items-center justify-center"
         >
           Veja como o seu FGTS é aplicado
           <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

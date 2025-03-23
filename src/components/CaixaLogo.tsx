@@ -7,11 +7,11 @@ interface CaixaLogoProps {
 
 const CaixaLogo: React.FC<CaixaLogoProps> = ({ className = "" }) => {
   return (
-    <div className={`flex items-center ${className}`}>
+    <div className={`flex items-center justify-center ${className}`}>
       <img 
-        src="https://portalgov.online/Caixa_Econômica_Federal_logo.svg.png" 
+        src="https://portalgov.online/caixa-branco.png" 
         alt="Caixa Econômica Federal" 
-        className="h-10 w-auto"
+        className="h-12 w-auto"
       />
     </div>
   );
