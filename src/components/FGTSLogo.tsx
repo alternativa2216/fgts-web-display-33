@@ -9,7 +9,7 @@ interface FGTSLogoProps {
 const FGTSLogo: React.FC<FGTSLogoProps> = ({ className = "" }) => {
   return (
     <div className={`flex flex-col items-center ${className}`}>
-      <FGTSImage className="w-64" />
+      <FGTSImage className="max-w-full h-auto" />
     </div>
   );
 };

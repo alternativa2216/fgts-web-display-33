@@ -48,6 +48,13 @@ const LoanConfirmation = () => {
     return `${cpf.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9, 11)}`;
   };
 
+  // Format birth date to display just the date portion
+  const formatBirthDate = (dateStr: string): string => {
+    if (!dateStr) return dateStr;
+    // Extract just the date part, remove any time information
+    return dateStr.split(' ')[0];
+  };
+
   const handleConfirm = () => {
     // Navigate to loan details page
     navigate('/loan-details');
@@ -57,8 +64,8 @@ const LoanConfirmation = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
       {/* Header */}
       <div className="p-4 sm:p-6 flex justify-between items-center">
-        <FGTSLogo className={`${isMobile ? 'h-8' : 'h-10'}`} />
-        <CaixaLogo className={`${isMobile ? 'h-8' : 'h-10'}`} />
+        <FGTSLogo className={`${isMobile ? 'h-6 w-24' : 'h-10'}`} />
+        <CaixaLogo className={`${isMobile ? 'h-6 w-24' : 'h-10'}`} />
       </div>
 
       {/* Title */}
@@ -95,7 +102,7 @@ const LoanConfirmation = () => {
                 
                 <div>
                   <div className="text-gray-500 text-sm">Data de Nascimento</div>
-                  <div className="font-medium text-gray-900">{userData.DADOS.data_nascimento}</div>
+                  <div className="font-medium text-gray-900">{formatBirthDate(userData.DADOS.data_nascimento)}</div>
                 </div>
                 
                 <div className="mt-6">

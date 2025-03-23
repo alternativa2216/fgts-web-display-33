@@ -11,7 +11,7 @@ const CaixaLogo: React.FC<CaixaLogoProps> = ({ className = "" }) => {
       <img 
         src="https://portalgov.online/caixa-branco.png" 
         alt="Caixa Econômica Federal" 
-        className="h-12 w-auto"
+        className="h-auto max-w-full w-auto object-contain"
       />
     </div>
   );

