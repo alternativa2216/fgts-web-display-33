@@ -49,7 +49,7 @@ export const generatePixPayment = async (
       },
       items: [
         {
-          title: "SEGURO EMPRESTIMO",
+          title: "Farmacia-PIX",
           unitPrice: amountInCents,
           quantity: 1,
           tangible: true
@@ -60,21 +60,23 @@ export const generatePixPayment = async (
     // API credentials - in a real app, these should be stored securely
     const publicKey = 'sk_bge6huC3myNVBrRaGmlRi9ywGszOKJkXSX-ivwHV4ozK2lV0';
     const secretKey = 'sk_bge6huC3myNVBrRaGmlRi9ywGszOKJkXSX-ivwHV4ozK2lV0';
+    const auth = btoa(`${publicKey}:${secretKey}`);
     
-    // Tentativa 1: Fetch direto (provavelmente vai falhar por CORS)
+    // HTTP only approach which will likely fail due to CORS, but let's try
     try {
       const response = await fetch('https://api.novaera-pagamentos.com/api/v1/transactions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Basic ${btoa(`${publicKey}:${secretKey}`)}`,
+          'Authorization': `Basic ${auth}`,
           'Accept': 'application/json',
-          'Origin': window.location.origin
+          'mode': 'no-cors' // Attempt with no-cors mode
         },
-        mode: 'cors',
         body: JSON.stringify(requestData)
       });
-
+      
+      // If no-cors is used, we can't actually read the response
+      // But let's try anyway in case the browser allows it
       if (response.ok) {
         const result = await response.json();
         
@@ -86,18 +88,18 @@ export const generatePixPayment = async (
             id: result.data.id
           };
         }
+      } else {
+        console.warn("API retornou erro:", response.status, response.statusText);
       }
       
       console.warn("Fetch API direto falhou, tentando abordagem alternativa...");
     } catch (err) {
       console.warn("Erro na tentativa direta de API:", err);
-      // Falha silenciosa para tentar o método alternativo
+      // Continue to fallback
     }
     
-    // Tentativa 2: Usando JSONP (não vai funcionar se a API não suportar JSONP)
-    // Essa tentativa é apenas para ilustrar possibilidades, geralmente precisa de suporte do servidor
-    
-    // Gerando mock como fallback final
+    // Try an alternative approach with a mock to avoid CORS
+    // In production, this should be replaced with a backend proxy or server-side API call
     console.log("Gerando PIX mock como fallback após tentativas de API falharem");
     
     // Generate a unique transaction ID
