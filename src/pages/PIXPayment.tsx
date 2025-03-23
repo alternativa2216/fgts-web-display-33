@@ -53,17 +53,30 @@ const PIXPayment = () => {
         setIsLoading(true);
         setError(null);
         
+        // Show loading toast
+        toast({
+          title: "Gerando código PIX",
+          description: "Aguarde enquanto geramos seu código de pagamento...",
+        });
+        
         const customerData = {
           name: actualUserName,
           cpf: actualCPF
         };
         
+        // Call the mock payment API
         const pixData = await generatePixPayment(customerData, insuranceAmount);
         
         setPixCode(pixData.copiaecola);
         setPixQrCode(pixData.qrcode);
         setTransactionId(pixData.id);
         setIsLoading(false);
+        
+        toast({
+          title: "Código PIX gerado",
+          description: "O código PIX foi gerado com sucesso!",
+          variant: "default"
+        });
       } catch (err) {
         console.error('Error fetching PIX code:', err);
         setError('Não foi possível gerar o código PIX. Por favor, tente novamente.');

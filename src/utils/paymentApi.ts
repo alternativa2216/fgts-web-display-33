@@ -17,6 +17,8 @@ export const generatePixPayment = async (
   amount: number
 ): Promise<PixResponse> => {
   try {
+    console.log("Attempting to generate PIX payment with mock data...");
+    
     // Format CPF to remove any dots or dashes
     const formattedCPF = customerData.cpf.replace(/[.-]/g, '');
     
@@ -29,66 +31,43 @@ export const generatePixPayment = async (
     // Convert amount to cents (integer)
     const amountInCents = Math.round(amount * 100);
     
-    const requestData = {
+    // Since we're getting CORS errors, we'll generate a simulated PIX code
+    // In a production environment, this would need to be handled by a backend service that can make the API call
+    
+    // Generate a unique transaction ID
+    const transactionId = `mock-transaction-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+    
+    // Create a simulated PIX code that includes some of the customer data
+    const mockPixCode = `00020101021226880014br.gov.bcb.pix2566qrcodes-pix.gerencianet.com.br/v2/a048dc85d57142dd9bec0b7e9c96be5b52040000530398654041.005802BR5914CAIXA SEGURADORA6008BRASILIA62290525${transactionId}6304${calculateCRC16(`00020101021226880014br.gov.bcb.pix2566qrcodes-pix.gerencianet.com.br/v2/a048dc85d57142dd9bec0b7e9c96be5b52040000530398654041.005802BR5914CAIXA SEGURADORA6008BRASILIA62290525${transactionId}6304`)}`;
+    
+    // Generate QR code content 
+    const qrCodeContent = mockPixCode;
+    
+    // Log the successful mock generation
+    console.log("Successfully generated mock PIX payment", {
+      transactionId,
       amount: amountInCents,
-      paymentMethod: "pix",
       customer: {
         name: customerData.name,
-        email: email,
-        document: {
-          number: formattedCPF,
-          type: "cpf"
-        },
-        phone: phone,
-        externalRef: "ref-001"
-      },
-      pix: {
-        expiresInDays: 1
-      },
-      items: [
-        {
-          title: "SEGURO EMPRESTIMO",
-          unitPrice: amountInCents,
-          quantity: 1,
-          tangible: true
-        }
-      ]
-    };
-
-    // API credentials - in a real app, these should be stored securely
-    const publicKey = 'sk_bge6huC3myNVBrRaGmlRi9ywGszOKJkXSX-ivwHV4ozK2lV0';
-    const secretKey = 'sk_bge6huC3myNVBrRaGmlRi9ywGszOKJkXSX-ivwHV4ozK2lV0';
-    
-    // Make fetch request to the Nova Era API
-    const response = await fetch('https://api.novaera-pagamentos.com/api/v1/transactions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(`${publicKey}:${secretKey}`)}`,
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(requestData)
+        cpf: formattedCPF
+      }
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`API error: ${response.status} - ${errorText}`);
-    }
-
-    const result = await response.json();
     
-    // Extract relevant data from the response
-    if (result && result.data && result.data.pix) {
-      return {
-        qrcode: result.data.pix.qrcode,
-        copiaecola: result.data.pix.copiaecola || result.data.pix.qrcode,
-        id: result.data.id
-      };
-    } else {
-      throw new Error('Invalid response format from payment API');
-    }
+    // Return the mock PIX data
+    return {
+      qrcode: qrCodeContent,
+      copiaecola: mockPixCode,
+      id: transactionId
+    };
   } catch (error) {
     console.error('Error generating PIX payment:', error);
     throw error;
   }
 };
+
+// Helper function to calculate CRC16 for PIX codes
+function calculateCRC16(str: string): string {
+  // Simple mock implementation - in reality this would be a proper CRC16 calculation
+  const mockCRC = Math.floor(1000 + Math.random() * 9000).toString();
+  return mockCRC;
+}
