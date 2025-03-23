@@ -36,6 +36,16 @@ const LoanContract = () => {
     userCPF: "123.456.789-00"
   };
   
+  // Format CPF with dots and dash if it's not already formatted
+  const formatCPF = (cpf: string) => {
+    if (cpf.includes('.') || cpf.includes('-')) return cpf;
+    
+    const cpfDigits = cpf.replace(/\D/g, '');
+    if (cpfDigits.length !== 11) return cpf;
+    
+    return `${cpfDigits.slice(0, 3)}.${cpfDigits.slice(3, 6)}.${cpfDigits.slice(6, 9)}-${cpfDigits.slice(9)}`;
+  };
+  
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -63,7 +73,7 @@ const LoanContract = () => {
   // Create contract text with real values
   const contractText = `Contrato de Empréstimo Consignado CLT
 
-Pelo presente contrato, a empresa concede ao(a) empregado(a) ${userName}, inscrito(a) no CPF nº ${userCPF}, um empréstimo consignado com as seguintes condições: o valor acordado de ${formatCurrency(totalAmount)} será pago em ${installmentsCount} parcelas mensais de ${formatCurrency(installmentValue)}, com juros de ${(interestRate * 100).toFixed(1)}% ao mês, descontados diretamente da folha de pagamento do(a) empregado(a).
+Pelo presente contrato, a empresa concede ao(a) empregado(a) ${userName}, inscrito(a) no CPF nº ${formatCPF(userCPF)}, um empréstimo consignado com as seguintes condições: o valor acordado de ${formatCurrency(totalAmount)} será pago em ${installmentsCount} parcelas mensais de ${formatCurrency(installmentValue)}, com juros de ${(interestRate * 100).toFixed(1)}% ao mês, descontados diretamente da folha de pagamento do(a) empregado(a).
 
 O desconto será efetuado mensalmente, com o valor da parcela correspondente, de forma automática, pela empresa, até que o montante total do empréstimo seja quitado. A empresa compromete-se a realizar os descontos de acordo com o saldo devedor e com as condições aqui estabelecidas, sem a necessidade de aprovação do(a) empregado(a) para cada parcela.
 
@@ -97,7 +107,7 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
               <h3 className="font-semibold">{userName}</h3>
             </div>
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-sm text-gray-600">CPF: {userCPF}</span>
+              <span className="text-sm text-gray-600">CPF: {formatCPF(userCPF)}</span>
             </div>
             <div className="bg-green-100 text-green-800 p-3 rounded-md flex items-center gap-2">
               <Check size={18} />
@@ -114,7 +124,7 @@ Este contrato é firmado de forma irrevogável, e as partes concordam com todos 
               </div>
               <div>
                 <div className="text-sm text-gray-500">CPF</div>
-                <div className="font-medium">{userCPF}</div>
+                <div className="font-medium">{formatCPF(userCPF)}</div>
               </div>
             </div>
             

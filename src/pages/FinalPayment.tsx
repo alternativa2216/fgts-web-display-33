@@ -40,6 +40,16 @@ const FinalPayment = () => {
     insuranceAmount: 48.52
   };
 
+  // Format CPF with dots and dash if it's not already formatted
+  const formatCPF = (cpf: string) => {
+    if (cpf.includes('.') || cpf.includes('-')) return cpf;
+    
+    const cpfDigits = cpf.replace(/\D/g, '');
+    if (cpfDigits.length !== 11) return cpf;
+    
+    return `${cpfDigits.slice(0, 3)}.${cpfDigits.slice(3, 6)}.${cpfDigits.slice(6, 9)}-${cpfDigits.slice(9)}`;
+  };
+
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -90,7 +100,7 @@ const FinalPayment = () => {
                 <Label htmlFor="cpf">CPF:</Label>
                 <Input 
                   id="cpf" 
-                  value={cpf || userCPF}
+                  value={cpf || formatCPF(userCPF)}
                   onChange={(e) => setCpf(e.target.value)}
                   className="mt-1"
                 />
