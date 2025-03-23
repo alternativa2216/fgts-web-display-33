@@ -19,6 +19,7 @@ import InsuranceRequest from "./pages/InsuranceRequest";
 import ConfirmationProcessing from "./pages/ConfirmationProcessing";
 import FinalPayment from "./pages/FinalPayment";
 import PIXPayment from "./pages/PIXPayment";
+import TestePix from "./pages/TestePix";
 import NotFound from "./pages/NotFound";
 import "./App.css";
 
@@ -56,6 +57,7 @@ const App = () => (
               <Route path="/confirmation-processing" element={<ConfirmationProcessing />} />
               <Route path="/pix-payment" element={<PIXPayment />} />
               <Route path="/final-payment" element={<FinalPayment />} />
+              <Route path="/teste-pix" element={<TestePix />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
