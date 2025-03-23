@@ -4,40 +4,62 @@ import { ArrowRight, DollarSign, BarChart3, Calendar, Home, HelpCircle, MoreHori
 import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
 
+interface UserData {
+  DADOS: {
+    cpf: string;
+    nome: string;
+    nome_mae: string;
+    data_nascimento: string;
+    sexo: string;
+  }
+}
+
 const Dashboard = () => {
   const [fullName, setFullName] = useState('');
 
   useEffect(() => {
-    // Get CPF from localStorage which was stored during CPF entry
-    const cpf = localStorage.getItem('userCPF') || '';
-    
-    // Simulate API call to get user's full name based on CPF
-    // In a real application, you would make an actual API call here
-    const simulateApiCall = async () => {
-      try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      // Try to get user data from localStorage
+      const userDataString = localStorage.getItem('userData');
+      
+      if (userDataString) {
+        // If we have the full user data, use it
+        const userData: UserData = JSON.parse(userDataString);
+        setFullName(userData.DADOS.nome);
+      } else {
+        // Fallback to the previous approach if full data isn't available
+        const cpf = localStorage.getItem('userCPF') || '';
         
-        // Simulate getting a name based on the CPF
-        // This is just for demonstration
-        const mockNames = [
-          "Maria Silva", 
-          "João Santos", 
-          "Ana Oliveira", 
-          "Pedro Souza", 
-          "Carla Pereira"
-        ];
+        // Simulate API call to get user's full name based on CPF
+        const simulateApiCall = async () => {
+          try {
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Simulate getting a name based on the CPF
+            const mockNames = [
+              "Maria Silva", 
+              "João Santos", 
+              "Ana Oliveira", 
+              "Pedro Souza", 
+              "Carla Pereira"
+            ];
+            
+            // Use last digit of CPF to select a name, or default if no CPF
+            const nameIndex = cpf.length > 0 ? parseInt(cpf.slice(-1)) % mockNames.length : 0;
+            setFullName(mockNames[nameIndex]);
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+            setFullName("Usuário");
+          }
+        };
         
-        // Use last digit of CPF to select a name, or default if no CPF
-        const nameIndex = cpf.length > 0 ? parseInt(cpf.slice(-1)) % mockNames.length : 0;
-        setFullName(mockNames[nameIndex]);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setFullName("Usuário");
+        simulateApiCall();
       }
-    };
-    
-    simulateApiCall();
+    } catch (error) {
+      console.error("Error processing user data:", error);
+      setFullName("Usuário");
+    }
   }, []);
 
   return (
