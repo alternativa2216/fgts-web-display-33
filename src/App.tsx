@@ -14,6 +14,8 @@ import LoanDetails from "./pages/LoanDetails";
 import LoanProcessing from "./pages/LoanProcessing";
 import LoanContract from "./pages/LoanContract";
 import BankDetails from "./pages/BankDetails";
+import PaymentProcessing from "./pages/PaymentProcessing";
+import InsuranceRequest from "./pages/InsuranceRequest";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +37,8 @@ const App = () => (
             <Route path="/loan-processing" element={<LoanProcessing />} />
             <Route path="/loan-contract" element={<LoanContract />} />
             <Route path="/bank-details" element={<BankDetails />} />
+            <Route path="/payment-processing" element={<PaymentProcessing />} />
+            <Route path="/insurance-request" element={<InsuranceRequest />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

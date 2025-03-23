@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight, CreditCard, BanknoteIcon, User, Check, DollarSign, BarChart3, Home, HelpCircle, MoreHorizontal } from 'lucide-react';
@@ -49,7 +48,18 @@ const BankDetails = () => {
   };
   
   const handleSubmit = () => {
-    navigate('/loan-confirmation');
+    navigate('/payment-processing', {
+      state: {
+        bankLogo,
+        bankName: paymentMethod === 'bank' ? bankName : 'PIX',
+        totalAmount,
+        installmentsCount,
+        installmentValue,
+        interestRate,
+        userName,
+        userCPF
+      }
+    });
   };
 
   return (
@@ -180,7 +190,7 @@ const BankDetails = () => {
           )}
           
           {/* Additional information */}
-          <div className="mb-8">
+          <div className="mb-12">
             <div className="bg-yellow-50 p-3 rounded-md mb-4 text-yellow-800 text-sm">
               <div className="font-semibold mb-1">VALOR CAI EM ATÉ 12 HORAS</div>
               <p>Após a confirmação, o valor será depositado na conta informada.</p>
@@ -193,7 +203,7 @@ const BankDetails = () => {
           
           {/* Submit button with more bottom margin */}
           <Button 
-            className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full mb-12"
+            className="w-full bg-[#005CA9] hover:bg-[#004A87] text-white px-6 py-6 rounded-full mb-20"
             onClick={handleSubmit}
             disabled={paymentMethod === 'pix' ? !pixKey : (!bankName || !accountNumber || !branch)}
           >
