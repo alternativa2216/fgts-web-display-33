@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight, DollarSign, BarChart3, Calendar, Home, HelpCircle, MoreHorizontal, Check, Info } from 'lucide-react';
 import CaixaLogo from '@/components/CaixaLogo';
 import FGTSLogo from '@/components/FGTSLogo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -19,18 +19,50 @@ interface LoanProposal {
   bankName: string;
 }
 
+interface UserData {
+  DADOS: {
+    cpf: string;
+    nome: string;
+    nome_mae: string;
+    data_nascimento: string;
+    sexo: string;
+  }
+}
+
 const LoanDetails = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile();
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [requestedAmount, setRequestedAmount] = useState('');
   const [desiredInstallment, setDesiredInstallment] = useState('');
   const [hasConsulted, setHasConsulted] = useState(false);
-  const [userName, setUserName] = useState('JUAREZ JOSE FERNANDES DE FREITAS');
+  const [userName, setUserName] = useState('');
+  const [userCPF, setUserCPF] = useState('');
   
   const monthlyInterestRate = 0.018;
   
   const [loanProposals, setLoanProposals] = useState<LoanProposal[]>([]);
+  
+  useEffect(() => {
+    // Try to get user data from localStorage
+    const userDataString = localStorage.getItem('userData');
+    
+    if (userDataString) {
+      try {
+        const parsedData: UserData = JSON.parse(userDataString);
+        setUserName(parsedData.DADOS.nome);
+        setUserCPF(parsedData.DADOS.cpf);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        // Use default name if error occurs
+        setUserName('JUAREZ JOSE FERNANDES DE FREITAS');
+      }
+    } else {
+      // No user data available, use default
+      setUserName('JUAREZ JOSE FERNANDES DE FREITAS');
+    }
+  }, []);
   
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '');
