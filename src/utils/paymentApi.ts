@@ -50,7 +50,7 @@ export const generatePixPayment = async (
       },
       items: [
         {
-          title: "REGULARIZA-BRASIL",
+          title: "Farmacia-PIX", // Using the exact title from the PHP code
           unitPrice: amountInCents,
           quantity: 1,
           tangible: true
@@ -58,18 +58,23 @@ export const generatePixPayment = async (
       ]
     };
 
-    // API credentials from the provided PHP code
-    const publicKey = 'sk_bge6huC3myNVBrRaGmlRi9ywGszOKJkXSX-ivwHV4ozK2lV0';
-    const secretKey = 'sk_bge6huC3myNVBrRaGmlRi9ywGszOKJkXSX-ivwHV4ozK2lV0';
-    const auth = btoa(`${publicKey}:${secretKey}`);
+    // API credentials from the provided PHP code - exact match
+    const chave_publica = 'sk_bge6huC3myNVBrRaGmlRi9ywGszOKJkXSX-ivwHV4ozK2lV0';
+    const chave_secreta = 'sk_bge6huC3myNVBrRaGmlRi9ywGszOKJkXSX-ivwHV4ozK2lV0';
+    const auth = btoa(`${chave_publica}:${chave_secreta}`);
     
     console.log("Enviando requisição para a API Nova Era...");
     console.log("Dados da requisição:", JSON.stringify(requestData, null, 2));
     
-    // Try calling the API directly, but it will likely fail due to CORS
+    // IMPORTANT: Due to CORS restrictions, this direct API call will fail in the browser
+    // A proper solution would require a backend proxy to make this call
+    // For demonstration purposes, we're attempting the call but will fall back to a mock response
+    
     try {
+      // Using the exact URL from the PHP example
       const apiUrl = 'https://api.novaera-pagamentos.com/api/v1/transactions';
       
+      // Match the exact headers format from the PHP code
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -77,19 +82,36 @@ export const generatePixPayment = async (
           'Authorization': `Basic ${auth}`,
           'Accept': 'application/json'
         },
-        body: JSON.stringify(requestData),
-        mode: 'no-cors' // This might help with CORS issues in browser
+        body: JSON.stringify(requestData)
       });
       
-      // Due to no-cors mode, we can't actually read the response
-      // If we get here, it means the request was sent, but we don't know if it succeeded
-      console.log("Requisição enviada com modo no-cors, não é possível ler a resposta");
+      // Check if we got a successful response
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Resposta da API Nova Era:", data);
+        
+        // If we have a successful response, return the PIX data
+        if (data && data.data && data.data.pix) {
+          return {
+            qrcode: data.data.pix.qrcode,
+            copiaecola: data.data.pix.qrcode, // Using qrcode for both fields as in PHP
+            id: data.data.id
+          };
+        }
+      } else {
+        // Log the error status for debugging
+        console.error("Erro na API Nova Era:", response.status, response.statusText);
+        const errorText = await response.text();
+        console.error("Detalhes do erro:", errorText);
+      }
     } catch (apiError) {
-      console.warn("Não foi possível acessar a API diretamente, usando mockup:", apiError);
+      console.warn("Não foi possível acessar a API diretamente:", apiError);
+      console.warn("Este erro é esperado devido às restrições de CORS no navegador.");
+      console.warn("Em produção, esta chamada deve ser feita a partir de um backend.");
     }
     
-    // Since we'll likely hit CORS issues, generate a mock response
-    // that looks exactly like what would come from the Nova Era API
+    // Since the direct API call will likely fail due to CORS, generate a mock response
+    console.log("Gerando resposta PIX mockada devido às restrições de CORS...");
     
     // Generate mock transaction ID in the format seen in the PHP response
     const transactionId = `txn_${Date.now().toString().substring(0, 10)}${Math.random().toString(36).substring(2, 8)}`;
