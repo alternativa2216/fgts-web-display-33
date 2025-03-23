@@ -1,8 +1,28 @@
+
 #root {
-  max-width: 1280px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+}
+
+/* Ensure pages take up full viewport height without scrolling */
+html, body {
+  overflow-x: hidden;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Use the modern viewport height unit for better mobile support */
+.min-h-screen {
+  min-height: 100vh; /* Fallback */
+  min-height: 100svh; /* Modern viewport height */
+}
+
+.min-h-screen-safe {
+  min-height: 100vh; /* Fallback */
+  min-height: 100svh; /* Safe viewport height */
 }
 
 .logo {
